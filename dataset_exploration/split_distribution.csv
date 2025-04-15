@@ -1,0 +1,9 @@
+Category,Train,Validation,Test
+Human,3636,777,745
+Car,71779,15460,15380
+Truck,6732,1408,1405
+Van,7062,1498,1435
+Motorbike,222,41,56
+Bicycle,788,173,167
+Bus,530,96,103
+Trailer,1819,370,349

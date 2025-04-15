@@ -1,0 +1,43 @@
+AU-AIR Dataset Summary
+=====================
+
+Dataset Info:
+  description: AUAIR 2019 Dataset
+  url: https://bozcani.github.io/AU-AIR-dataset.html
+  version: 1.0
+  year: 2019
+  contributor: Ilker Bozcan
+  date_created: 2019/10/01
+
+Categories:
+  0: Human
+  1: Car
+  2: Truck
+  3: Van
+  4: Motorbike
+  5: Bicycle
+  6: Bus
+  7: Trailer
+
+Total unique images: 32823
+Total annotations: 32823
+
+Objects per category:
+  Human: 5158
+  Car: 102619
+  Truck: 9545
+  Van: 9995
+  Motorbike: 319
+  Bicycle: 1128
+  Bus: 729
+  Trailer: 2538
+
+Bounding Box Statistics:
+  Average width: 127.50 pixels
+  Average height: 84.98 pixels
+  Average area: 16478.24 pixels²
+  Average aspect ratio: 1.62
+  Min width: 0 pixels
+  Max width: 1920 pixels
+  Min height: 0 pixels
+  Max height: 1074 pixels
