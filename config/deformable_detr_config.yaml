@@ -1,0 +1,88 @@
+# Deformable DETR model configuration - Ultra Optimized for RTX 3070Ti with class balancing
+model:
+  name: "DeformableDetr"
+  hidden_dim: 48  # Reduced from 64 to 48 for faster training
+  nheads: 2
+  num_encoder_layers: 1  # Reduced from 2 to 1 for faster training
+  num_decoder_layers: 1  # Reduced from 2 to 1 for faster training
+  dim_feedforward: 192  # Reduced from 256 to 192
+  dropout: 0.1  # Back to 0.1, too much dropout slows convergence
+  num_feature_levels: 1  # Reduced from 2 to 1 - critically improves speed
+  dec_n_points: 2
+  enc_n_points: 2
+  num_queries: 15  # Reduced from 25 to 15 queries
+  aux_loss: False
+
+# Dataset configuration
+dataset:
+  name: "AU-AIR"
+  num_classes: 8
+  class_names: ["Human", "Car", "Truck", "Van", "Motorbike", "Bicycle", "Bus", "Trailer"]
+  train_path: "dataset/train"
+  val_path: "dataset/val"
+  test_path: "dataset/test"
+  img_size: [180, 320]  # Reduced from [270, 480] to [180, 320] for faster training
+  normalize:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  # Sampling to reduce dataset size
+  sampling:
+    enabled: True  # Enable sampling for much faster training
+    train_fraction: 0.5  # Use 50% of data for faster epochs
+    val_fraction: 0.5    # Use 50% of validation data
+
+# Training configuration
+training:
+  batch_size: 16  # Increased from 6 to 16 for faster training
+  lr: 0.0002  # Increased from 0.0001 to 0.0002 for faster convergence
+  weight_decay: 0.0001
+  lr_backbone: 0.00002  # Increased from 0.00001 to 0.00002
+  epochs: 15  # Reduced from 30 to 15 epochs
+  lr_drop: 10  # Adjusted for fewer epochs
+  clip_max_norm: 0.1
+  seed: 42
+  
+  # Loss weights - adjusted to emphasize class imbalance
+  loss_weights:
+    loss_ce: 2.0
+    loss_bbox: 5.0
+    loss_giou: 2.0
+    loss_cardinality: 1.0
+  
+  # Performance optimization
+  mixed_precision: True
+  num_workers: 4  # Increased from 2 to 4 for faster data loading
+  pin_memory: True
+  grad_accumulation: 1  # Reduced accumulation to process data faster
+  prefetch_factor: 2  # Add prefetch factor for faster data loading
+  benchmark_cudnn: True  # Enable cuDNN benchmarking
+  compile_model: True  # Use torch.compile for faster execution
+  jit_optimize: True  # Use JIT optimization for faster inference
+  use_tf32: True  # Use TF32 for faster computation on new NVIDIA GPUs
+
+# Optimizer configuration
+optimizer:
+  type: "AdamW"
+  lr: 0.0002
+  weight_decay: 0.0001
+  
+# Scheduler configuration
+scheduler:
+  type: "OneCycleLR"  # Changed from StepLR to OneCycleLR for faster convergence
+  max_lr: 0.0006
+  pct_start: 0.3
+  div_factor: 10
+  final_div_factor: 1000
+
+# Wandb configuration
+wandb:
+  project: "assignment2"
+  entity: "ozkan-bilge"
+  name: "deformable-detr-ultralight-class-balanced-speedup"
+  tags: ["deformable-detr", "object-detection", "transformer", "ultralight", "class-balanced", "optimized"]
+
+# Testing/Inference configuration
+inference:
+  conf_threshold: 0.5
+  iou_threshold: 0.45
+  device: "cuda"  # or "cpu" 
