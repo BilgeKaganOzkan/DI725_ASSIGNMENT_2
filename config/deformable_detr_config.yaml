@@ -9,13 +9,13 @@ model:
   num_encoder_layers: 3  # Encoder depth (fewer = smaller model, faster training)
   num_decoder_layers: 3  # Decoder depth (fewer = smaller model, faster training)
   dim_feedforward: 512   # FFN dimension (lower = less memory, faster training)
-  dropout: 0.1           # Regularization strength (higher = better generalization)
+  dropout: 0.05          # Regularization strength (higher = better generalization)
 
   # Deformable attention parameters - controls feature extraction quality
   num_feature_levels: 3  # Feature pyramid levels (3 balances speed and detection quality)
   dec_n_points: 4        # Decoder sampling points (fewer = faster, less precise)
   enc_n_points: 4        # Encoder sampling points (fewer = faster, less precise)
-  num_queries: 300       # Object detection capacity (lower = faster, fewer detections)
+  num_queries: 200       # Object detection capacity (lower = faster, fewer detections)
   aux_loss: True         # Auxiliary decoding losses (improves training stability)
 
 # Dataset configuration
@@ -46,7 +46,7 @@ training:
   lr_backbone: 1e-5    # Backbone learning rate (slower updates for pretrained features)
   epochs: 50           # Total training iterations over dataset
   lr_drop: 40          # Learning rate decay point
-  clip_max_norm: 1.0   # Gradient clipping threshold (prevents exploding gradients)
+  clip_max_norm: 0.5   # Gradient clipping threshold (prevents exploding gradients)
 
   # Process control parameters
   seed: 2697134         # Deterministic initialization seed
@@ -71,10 +71,10 @@ training:
   # Loss function weights
   # Balances different aspects of detection quality
   loss_weights:
-    loss_ce: 2.0           # Classification weight (higher = prioritize correct classes)
+    loss_ce: 3.0           # Classification weight (higher = prioritize correct classes)
     loss_bbox: 5.0         # Box coordinate weight (higher = prioritize precise localization)
-    loss_giou: 2.0         # Box overlap weight (higher = prioritize better IoU)
-    loss_cardinality: 0.5  # Object count weight (higher = prioritize correct object count)
+    loss_giou: 3.0         # Box overlap weight (higher = prioritize better IoU)
+    loss_cardinality: 0.3  # Object count weight (higher = prioritize correct object count)
 
   # Hardware acceleration settings
   # PyTorch performance optimizations for modern GPUs
@@ -90,27 +90,27 @@ training:
   # Memory management
   # GPU memory allocation and optimization
   memory_management:
-    empty_cache_freq: 0   # CUDA cache clearing frequency (0 = disabled)
+    empty_cache_freq: 50   # CUDA cache clearing frequency (0 = disabled)
     adaptive_batch_size: False  # Dynamic batch size reduction
     min_batch_size: 16  # Minimum batch size if adaptive
 
     # GPU memory settings
     force_gpu_memory_usage: True  # Keep tensors on GPU
-    gpu_memory_fraction: 0.95  # Percentage of GPU memory to use
+    gpu_memory_fraction: 0.98  # Percentage of GPU memory to use
 
     # Attention computation chunking
     # Controls memory usage during self-attention
     chunk_size_large: 16000   # Large tensor operation chunk size
     chunk_size_small: 1000    # Small tensor operation chunk size
-    use_checkpoint: False    # Gradient checkpointing (trades compute for memory)
+    use_checkpoint: True      # Gradient checkpointing (trades compute for memory)
 
 # Optimizer configuration
 # Weight update algorithm and learning rate schedule
 optimizer:
   type: "AdamW"           # Optimization algorithm (AdamW best for transformers)
-  lr: 2e-4                # Initial learning rate
-  weight_decay: 1e-5      # Weight decay coefficient
-  scheduler_type: "cosine"  # LR schedule type (cosine, step, linear)
+  lr: 5e-4                # Initial learning rate
+  weight_decay: 5e-5      # Weight decay coefficient
+  scheduler_type: "onecycle"  # LR schedule type (cosine, step, linear)
   lr_step_size: 40        # Epochs between LR changes (step scheduler)
   lr_gamma: 0.1           # LR reduction factor (step scheduler)
 
