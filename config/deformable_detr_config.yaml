@@ -1,88 +1,150 @@
-# Deformable DETR model configuration - Ultra Optimized for RTX 3070Ti with class balancing
+# Deformable DETR Configuration
+# Controls model architecture, training parameters, and evaluation settings
+
 model:
   name: "DeformableDetr"
-  hidden_dim: 48  # Reduced from 64 to 48 for faster training
-  nheads: 2
-  num_encoder_layers: 1  # Reduced from 2 to 1 for faster training
-  num_decoder_layers: 1  # Reduced from 2 to 1 for faster training
-  dim_feedforward: 192  # Reduced from 256 to 192
-  dropout: 0.1  # Back to 0.1, too much dropout slows convergence
-  num_feature_levels: 1  # Reduced from 2 to 1 - critically improves speed
-  dec_n_points: 2
-  enc_n_points: 2
-  num_queries: 15  # Reduced from 25 to 15 queries
-  aux_loss: False
+  # Core architecture parameters - controls model size, speed, and memory usage
+  hidden_dim: 128        # Feature dimension (lower = faster, less memory, reduced accuracy)
+  nheads: 4              # Attention heads (lower = faster, less memory)
+  num_encoder_layers: 3  # Encoder depth (fewer = smaller model, faster training)
+  num_decoder_layers: 3  # Decoder depth (fewer = smaller model, faster training)
+  dim_feedforward: 512   # FFN dimension (lower = less memory, faster training)
+  dropout: 0.1           # Regularization strength (higher = better generalization)
+
+  # Deformable attention parameters - controls feature extraction quality
+  num_feature_levels: 3  # Feature pyramid levels (3 balances speed and detection quality)
+  dec_n_points: 4        # Decoder sampling points (fewer = faster, less precise)
+  enc_n_points: 4        # Encoder sampling points (fewer = faster, less precise)
+  num_queries: 300       # Object detection capacity (lower = faster, fewer detections)
+  aux_loss: True         # Auxiliary decoding losses (improves training stability)
 
 # Dataset configuration
+# Defines data sources, preprocessing, and memory management
 dataset:
-  name: "AU-AIR"
-  num_classes: 8
-  class_names: ["Human", "Car", "Truck", "Van", "Motorbike", "Bicycle", "Bus", "Trailer"]
-  train_path: "dataset/train"
-  val_path: "dataset/val"
-  test_path: "dataset/test"
-  img_size: [180, 320]  # Reduced from [270, 480] to [180, 320] for faster training
-  normalize:
-    mean: [0.485, 0.456, 0.406]
-    std: [0.229, 0.224, 0.225]
-  # Sampling to reduce dataset size
-  sampling:
-    enabled: True  # Enable sampling for much faster training
-    train_fraction: 0.5  # Use 50% of data for faster epochs
-    val_fraction: 0.5    # Use 50% of validation data
+  name: "AU-AIR"                # Dataset identifier
+  num_classes: 8                # Number of object categories
+  class_names: ["Human", "Car", "Truck", "Van", "Motorbike", "Bicycle", "Bus", "Trailer"]  # Class labels
+  train_path: "dataset/train"   # Training data location
+  val_path: "dataset/val"       # Validation data location
+  test_path: "dataset/test"     # Test data location
+  img_size: [384, 576]          # Input dimensions [height, width] - optimized for detection
+  normalize:                    # ImageNet normalization values
+    mean: [0.485, 0.456, 0.406] # RGB means
+    std: [0.229, 0.224, 0.225]  # RGB standard deviations
+  # Memory management
+  cache_images: True            # Enable in-memory caching
+  cache_limit: 500              # Maximum cached images (prevents OOM errors)
+
 
 # Training configuration
+# Core training hyperparameters and optimization settings
 training:
-  batch_size: 16  # Increased from 6 to 16 for faster training
-  lr: 0.0002  # Increased from 0.0001 to 0.0002 for faster convergence
-  weight_decay: 0.0001
-  lr_backbone: 0.00002  # Increased from 0.00001 to 0.00002
-  epochs: 15  # Reduced from 30 to 15 epochs
-  lr_drop: 10  # Adjusted for fewer epochs
-  clip_max_norm: 0.1
-  seed: 42
-  
-  # Loss weights - adjusted to emphasize class imbalance
+  # Primary training parameters
+  batch_size: 32       # Samples per iteration (higher = better gradient estimates)
+  lr: 2e-4             # Learning rate (controls update step size)
+  weight_decay: 1e-4   # Regularization strength (prevents overfitting)
+  lr_backbone: 1e-5    # Backbone learning rate (slower updates for pretrained features)
+  epochs: 50           # Total training iterations over dataset
+  lr_drop: 40          # Learning rate decay point
+  clip_max_norm: 1.0   # Gradient clipping threshold (prevents exploding gradients)
+
+  # Process control parameters
+  seed: 2697134         # Deterministic initialization seed
+  save_checkpoint_every: 5  # Model saving frequency (epochs)
+  validate_every: 1         # Evaluation frequency (epochs)
+  log_interval: 64          # Metrics logging frequency (batches)
+
+  # Data loading optimization
+  # These settings significantly impact training throughput
+  num_workers: 8       # Parallel data loading threads
+  prefetch_factor: 4   # Samples to preload per worker
+  pin_memory: True     # Fast CPU-to-GPU memory transfer
+  mixed_precision: True  # Reduced precision for faster computation
+
+  # Dataset caching strategy
+  # Controls memory-speed tradeoff during training
+  cache_size_train: 5000   # Training samples to keep in memory
+  cache_size_val: 2000     # Validation samples to keep in memory
+  preload_size_train: 500  # Training samples to load at startup
+  preload_size_val: 200    # Validation samples to load at startup
+
+  # Loss function weights
+  # Balances different aspects of detection quality
   loss_weights:
-    loss_ce: 2.0
-    loss_bbox: 5.0
-    loss_giou: 2.0
-    loss_cardinality: 1.0
-  
-  # Performance optimization
-  mixed_precision: True
-  num_workers: 4  # Increased from 2 to 4 for faster data loading
-  pin_memory: True
-  grad_accumulation: 1  # Reduced accumulation to process data faster
-  prefetch_factor: 2  # Add prefetch factor for faster data loading
-  benchmark_cudnn: True  # Enable cuDNN benchmarking
-  compile_model: True  # Use torch.compile for faster execution
-  jit_optimize: True  # Use JIT optimization for faster inference
-  use_tf32: True  # Use TF32 for faster computation on new NVIDIA GPUs
+    loss_ce: 2.0           # Classification weight (higher = prioritize correct classes)
+    loss_bbox: 5.0         # Box coordinate weight (higher = prioritize precise localization)
+    loss_giou: 2.0         # Box overlap weight (higher = prioritize better IoU)
+    loss_cardinality: 0.5  # Object count weight (higher = prioritize correct object count)
+
+  # Hardware acceleration settings
+  # PyTorch performance optimizations for modern GPUs
+  mixed_precision: True   # Use lower precision where possible
+  precision: "bf16"      # BFloat16 format (better numerical stability than FP16)
+  pin_memory: True        # Use pinned (non-pageable) memory
+  grad_accumulation: 1    # Batches per weight update
+  benchmark_cudnn: True   # Auto-tune cuDNN algorithms
+  compile_model: True     # Use PyTorch 2.0 compilation
+  jit_optimize: True      # Just-in-time compilation
+  use_tf32: True          # TensorFloat32 math (A100/A10/RTX30xx+)
+
+  # Memory management
+  # GPU memory allocation and optimization
+  memory_management:
+    empty_cache_freq: 0   # CUDA cache clearing frequency (0 = disabled)
+    adaptive_batch_size: False  # Dynamic batch size reduction
+    min_batch_size: 16  # Minimum batch size if adaptive
+
+    # GPU memory settings
+    force_gpu_memory_usage: True  # Keep tensors on GPU
+    gpu_memory_fraction: 0.95  # Percentage of GPU memory to use
+
+    # Attention computation chunking
+    # Controls memory usage during self-attention
+    chunk_size_large: 16000   # Large tensor operation chunk size
+    chunk_size_small: 1000    # Small tensor operation chunk size
+    use_checkpoint: False    # Gradient checkpointing (trades compute for memory)
 
 # Optimizer configuration
+# Weight update algorithm and learning rate schedule
 optimizer:
-  type: "AdamW"
-  lr: 0.0002
-  weight_decay: 0.0001
-  
-# Scheduler configuration
-scheduler:
-  type: "OneCycleLR"  # Changed from StepLR to OneCycleLR for faster convergence
-  max_lr: 0.0006
-  pct_start: 0.3
-  div_factor: 10
-  final_div_factor: 1000
+  type: "AdamW"           # Optimization algorithm (AdamW best for transformers)
+  lr: 2e-4                # Initial learning rate
+  weight_decay: 1e-5      # Weight decay coefficient
+  scheduler_type: "cosine"  # LR schedule type (cosine, step, linear)
+  lr_step_size: 40        # Epochs between LR changes (step scheduler)
+  lr_gamma: 0.1           # LR reduction factor (step scheduler)
 
-# Wandb configuration
+# Weights & Biases logging
+# Experiment tracking and visualization settings
 wandb:
-  project: "assignment2"
-  entity: "ozkan-bilge"
-  name: "deformable-detr-ultralight-class-balanced-speedup"
-  tags: ["deformable-detr", "object-detection", "transformer", "ultralight", "class-balanced", "optimized"]
+  project: "2697134-assignment2"  # Project identifier
+  entity: "ozkan-bilge-middle-east-technical-university"  # Account name
+  name: "deformable-detr"  # Run name
+  tags: ["deformable-detr", "object-detection"]  # Searchable labels
 
-# Testing/Inference configuration
+# Evaluation configuration
+# Model assessment metrics and settings
+evaluation:
+  batch_size: 32          # Evaluation batch size
+  iou_thresholds: [0.1, 0.3, 0.5, 0.7, 0.9]  # Overlap thresholds for metrics
+  conf_threshold: 0.1     # Minimum detection confidence
+  max_detections: 100     # Maximum detections per image
+  save_visualizations: True  # Generate detection visualizations
+  metrics:                # Performance metrics to calculate
+    compute_precision: True    # Precision (TP/(TP+FP))
+    compute_recall: True       # Recall (TP/(TP+FN))
+    compute_f1: True           # F1 score (harmonic mean of precision/recall)
+    compute_accuracy: True     # Overall accuracy
+    compute_map: True          # Mean Average Precision
+    compute_confusion_matrix: True  # Class confusion statistics
+
+# Inference configuration
+# Deployment and prediction settings
 inference:
-  conf_threshold: 0.5
-  iou_threshold: 0.45
-  device: "cuda"  # or "cpu" 
+  conf_threshold: 0.1    # Detection confidence threshold
+  iou_threshold: 0.3     # NMS overlap threshold
+  device: "cuda"         # Inference hardware ("cuda" or "cpu")
+  batch_size: 1          # Inference batch size
+  visualize: True        # Create detection visualizations
+  save_results: True     # Save predictions to disk
+  output_dir: "results"  # Results output location

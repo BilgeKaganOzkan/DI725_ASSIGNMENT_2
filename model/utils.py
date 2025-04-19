@@ -1,325 +1,534 @@
+"""
+Utility functions for object detection models
+"""
+
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-import math
-import torchvision.transforms as T
-import torchvision.transforms.functional as TF
+import numpy as np
+from typing import List, Tuple, Dict, Optional, Union, Any, Iterable
+import matplotlib.pyplot as plt
+
+# Try to import seaborn, but don't fail if it's not available
+try:
+    import seaborn as sns
+except ImportError:
+    # Define a simple replacement for sns.heatmap if seaborn is not available
+    class SeabornReplacement:
+        def heatmap(self, data, annot=True, fmt='d', cmap='Blues', xticklabels=None, yticklabels=None):
+            fig, ax = plt.subplots()
+            im = ax.imshow(data, cmap=cmap)
+            if annot:
+                for i in range(data.shape[0]):
+                    for j in range(data.shape[1]):
+                        ax.text(j, i, format(data[i, j], fmt), ha="center", va="center")
+            if xticklabels is not None:
+                ax.set_xticks(range(len(xticklabels)))
+                ax.set_xticklabels(xticklabels)
+            if yticklabels is not None:
+                ax.set_yticks(range(len(yticklabels)))
+                ax.set_yticklabels(yticklabels)
+            return im
+    sns = SeabornReplacement()
 import time
-from collections import defaultdict, deque
 import datetime
-import torch.distributed as dist
+import math
+from collections import defaultdict, deque
 
 
 def box_cxcywh_to_xyxy(x):
     """
-    Convert bounding boxes from (center_x, center_y, width, height) format to (min_x, min_y, max_x, max_y) format.
-    
+    Convert bounding boxes from center-based to corner-based format
+
+    This function transforms bounding box coordinates from center-based format
+    (center_x, center_y, width, height) to corner-based format (x1, y1, x2, y2),
+    which is required for many operations like IoU calculation and visualization.
+
+    The function includes robust handling for various edge cases:
+    - Non-tensor inputs are automatically converted to tensors
+    - Empty tensors are handled gracefully
+    - Width and height values are forced to be positive
+
     Args:
-        x (torch.Tensor): Bounding boxes in (cx, cy, w, h) format, shape (N, 4)
-        
+        x: Tensor or array-like of shape (..., 4) containing bounding boxes in (cx, cy, w, h) format
+
     Returns:
-        torch.Tensor: Bounding boxes in (min_x, min_y, max_x, max_y) format, shape (N, 4)
+        Tensor of same shape containing bounding boxes in (x1, y1, x2, y2) format
     """
+    # Handle non-tensor inputs
+    if not isinstance(x, torch.Tensor):
+        x = torch.tensor(x, dtype=torch.float32)
+
+    # Handle empty tensors
+    if x.numel() == 0:
+        return x.reshape(-1, 4)
+
+    # Extract components
     x_c, y_c, w, h = x.unbind(-1)
-    b = [(x_c - 0.5 * w), (y_c - 0.5 * h),
-         (x_c + 0.5 * w), (y_c + 0.5 * h)]
-    return torch.stack(b, dim=-1)
+
+    # Ensure width and height are positive
+    w = torch.abs(w)
+    h = torch.abs(h)
+
+    # Compute corners
+    x1 = x_c - 0.5 * w
+    y1 = y_c - 0.5 * h
+    x2 = x_c + 0.5 * w
+    y2 = y_c + 0.5 * h
+
+    # Stack and return
+    return torch.stack([x1, y1, x2, y2], dim=-1)
 
 
 def box_xyxy_to_cxcywh(x):
     """
-    Convert bounding boxes from (min_x, min_y, max_x, max_y) format to (center_x, center_y, width, height) format.
-    
+    Convert bounding boxes from corner-based to center-based format
+
+    This function transforms bounding box coordinates from corner-based format
+    (x1, y1, x2, y2) to center-based format (center_x, center_y, width, height),
+    which is the preferred format for the Deformable DETR model.
+
+    The function includes robust handling for various edge cases:
+    - Non-tensor inputs are automatically converted to tensors
+    - Empty tensors are handled gracefully
+    - Coordinates are automatically sorted to ensure x1 ≤ x2 and y1 ≤ y2
+
     Args:
-        x (torch.Tensor): Bounding boxes in (min_x, min_y, max_x, max_y) format, shape (N, 4)
-        
+        x: Tensor or array-like of shape (..., 4) containing bounding boxes in (x1, y1, x2, y2) format
+
     Returns:
-        torch.Tensor: Bounding boxes in (center_x, center_y, width, height) format, shape (N, 4)
+        Tensor of same shape containing bounding boxes in (cx, cy, w, h) format
     """
+    # Handle non-tensor inputs
+    if not isinstance(x, torch.Tensor):
+        x = torch.tensor(x, dtype=torch.float32)
+
+    # Handle empty tensors
+    if x.numel() == 0:
+        return x.reshape(-1, 4)
+
+    # Extract components
     x0, y0, x1, y1 = x.unbind(-1)
-    b = [(x0 + x1) / 2, (y0 + y1) / 2,
-         (x1 - x0), (y1 - y0)]
-    return torch.stack(b, dim=-1)
+
+    # Ensure correct order (x1 <= x2, y1 <= y2)
+    x0_new = torch.min(x0, x1)
+    y0_new = torch.min(y0, y1)
+    x1_new = torch.max(x0, x1)
+    y1_new = torch.max(y0, y1)
+
+    # Compute center and dimensions
+    cx = (x0_new + x1_new) / 2
+    cy = (y0_new + y1_new) / 2
+    w = x1_new - x0_new
+    h = y1_new - y0_new
+
+    # Stack and return
+    return torch.stack([cx, cy, w, h], dim=-1)
+
+
+def box_iou(boxes1, boxes2):
+    """
+    Compute Intersection over Union (IoU) between all pairs of bounding boxes
+
+    This function efficiently calculates the IoU between all pairs of boxes from two sets,
+    using vectorized operations for better performance. IoU is a critical metric for
+    object detection that measures the overlap between predicted and ground truth boxes.
+
+    The calculation follows these steps:
+    1. Compute areas of all boxes in both sets
+    2. Find the coordinates of intersection rectangles
+    3. Calculate intersection areas
+    4. Calculate union areas (sum of individual areas minus intersection)
+    5. Compute IoU as intersection / union
+
+    A small epsilon (1e-6) is added to the denominator to prevent division by zero.
+
+    Args:
+        boxes1: Tensor of shape (N, 4) containing N boxes in (x1, y1, x2, y2) format
+        boxes2: Tensor of shape (M, 4) containing M boxes in (x1, y1, x2, y2) format
+
+    Returns:
+        Tensor of shape (N, M) containing IoU values for all pairs of boxes
+    """
+    area1 = box_area(boxes1)
+    area2 = box_area(boxes2)
+
+    lt = torch.max(boxes1[:, None, :2], boxes2[:, :2])  # [N,M,2]
+    rb = torch.min(boxes1[:, None, 2:], boxes2[:, 2:])  # [N,M,2]
+
+    wh = (rb - lt).clamp(min=0)  # [N,M,2]
+    inter = wh[:, :, 0] * wh[:, :, 1]  # [N,M]
+
+    union = area1[:, None] + area2 - inter
+
+    iou = inter / (union + 1e-6)
+    return iou
+
+
+def box_area(boxes):
+    """
+    Compute the area of bounding boxes efficiently
+
+    This function calculates the area of each bounding box in a batch by multiplying
+    the width and height. It works with batches of any shape as long as the last
+    dimension contains the box coordinates in (x1, y1, x2, y2) format.
+
+    The implementation uses PyTorch's broadcasting capabilities to efficiently
+    handle batches of boxes in a single operation.
+
+    Args:
+        boxes: Tensor of shape (..., 4) containing boxes in (x1, y1, x2, y2) format
+
+    Returns:
+        Tensor of shape (...) containing the area of each box
+    """
+    return (boxes[..., 2] - boxes[..., 0]) * (boxes[..., 3] - boxes[..., 1])
 
 
 def generalized_box_iou(boxes1, boxes2):
     """
-    Compute the generalized IoU between two sets of boxes.
-    
+    Compute Generalized IoU (GIoU) between pairs of bounding boxes
+
+    Generalized IoU is an improved version of the standard IoU metric that better
+    handles non-overlapping boxes. It penalizes predictions that are far from the
+    ground truth even when there is no overlap, making it a more effective loss
+    function for object detection training.
+
+    The GIoU is calculated as:
+    GIoU = IoU - (area_of_enclosing_box - union) / area_of_enclosing_box
+
+    This results in a value between -1 and 1, where:
+    - 1 indicates perfect overlap (same as IoU=1)
+    - 0 indicates no overlap with boxes touching
+    - Negative values indicate the degree of separation between non-overlapping boxes
+
     Args:
-        boxes1: first set of boxes (N, 4)
-        boxes2: second set of boxes (M, 4)
-        
+        boxes1: Tensor of shape (N, 4) containing N boxes in (x1, y1, x2, y2) format
+        boxes2: Tensor of shape (M, 4) containing M boxes in (x1, y1, x2, y2) format
+
     Returns:
-        giou: generalized IoU (N, M)
+        Tensor of shape (N, M) containing generalized IoU values for each pair of boxes
     """
-    # Convert from (cx, cy, w, h) to (x1, y1, x2, y2)
-    boxes1 = box_cxcywh_to_xyxy(boxes1)
-    boxes2 = box_cxcywh_to_xyxy(boxes2)
-    
-    # Calculate IoU
-    area1 = torch.prod(boxes1[:, 2:] - boxes1[:, :2], dim=1)
-    area2 = torch.prod(boxes2[:, 2:] - boxes2[:, :2], dim=1)
-    
-    # Get the coordinates of the intersection rectangle
-    lt = torch.max(boxes1[:, None, :2], boxes2[:, :2])  # left-top [N,M,2]
-    rb = torch.min(boxes1[:, None, 2:], boxes2[:, 2:])  # right-bottom [N,M,2]
-    
-    # Check if there's an intersection
+    # Standard IoU
+    iou = box_iou(boxes1, boxes2)
+
+    # Get the coordinates of bounding boxes
+    lt = torch.min(boxes1[:, None, :2], boxes2[:, :2])
+    rb = torch.max(boxes1[:, None, 2:], boxes2[:, 2:])
+
     wh = (rb - lt).clamp(min=0)  # [N,M,2]
-    inter = wh[:, :, 0] * wh[:, :, 1]  # [N,M]
-    
-    # Calculate union
-    union = area1[:, None] + area2 - inter
-    
-    # Calculate IoU
-    iou = inter / union
-    
-    # Calculate the coordinates of the smallest enclosing box
-    lt_c = torch.min(boxes1[:, None, :2], boxes2[:, :2])  # left-top of enclosing box
-    rb_c = torch.max(boxes1[:, None, 2:], boxes2[:, 2:])  # right-bottom of enclosing box
-    
-    # Calculate area of the enclosing box
-    wh_c = (rb_c - lt_c).clamp(min=0)  # [N,M,2]
-    area_c = wh_c[:, :, 0] * wh_c[:, :, 1]  # [N,M]
-    
-    # Calculate GIoU
-    giou = iou - (area_c - union) / area_c
-    
+    area = wh[:, :, 0] * wh[:, :, 1]  # [N,M]
+
+    # Compute union
+    area1 = box_area(boxes1)
+    area2 = box_area(boxes2)
+    union = area1[:, None] + area2 - iou * (area1[:, None] + area2 - area1[:, None] * area2)
+
+    # Compute GIoU
+    giou = iou - (area - union) / (area + 1e-6)
+
     return giou
 
 
-class NestedTensor(object):
+class HungarianMatcher:
     """
-    Utility class for handling tensors with padding.
+    Optimal bipartite matching between predictions and ground truth using Hungarian algorithm
+
+    This class implements the core matching logic for Deformable DETR, which assigns
+    each ground truth box to exactly one prediction. The matching is optimal in the sense
+    that it minimizes the total assignment cost across all possible assignments.
+
+    The matching cost combines three components:
+    1. Classification cost: Negative log-likelihood between predicted class probabilities
+       and target classes
+    2. L1 distance cost: L1 distance between predicted and target box coordinates
+    3. GIoU cost: Negative generalized IoU between predicted and target boxes
+
+    These costs can be weighted differently using the cost_class, cost_bbox, and cost_giou
+    parameters to emphasize different aspects of the prediction quality.
     """
-    def __init__(self, tensors, mask):
-        self.tensors = tensors
-        self.mask = mask
 
-    def to(self, device):
-        # Move tensors to the specified device
-        return NestedTensor(self.tensors.to(device), self.mask.to(device))
-
-    def decompose(self):
-        return self.tensors, self.mask
-
-
-class Preprocessor:
-    """
-    Preprocessing for Deformable DETR model
-    """
-    def __init__(self, 
-                 mean=[0.485, 0.456, 0.406],
-                 std=[0.229, 0.224, 0.225],
-                 max_size=1333):
-        self.mean = mean
-        self.std = std
-        self.max_size = max_size
-        
-        # Transforms for training
-        self.train_transforms = T.Compose([
-            T.RandomHorizontalFlip(),
-            T.RandomResize(sizes=[480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800], max_size=max_size),
-            T.Normalize(mean=mean, std=std)
-        ])
-        
-        # Transforms for validation/testing
-        self.val_transforms = T.Compose([
-            T.RandomResize(sizes=[800], max_size=max_size),
-            T.Normalize(mean=mean, std=std)
-        ])
-    
-    def __call__(self, img, target=None, is_train=True):
+    def __init__(self, cost_class=1.0, cost_bbox=5.0, cost_giou=2.0):
         """
-        Apply transformation to image and targets
-        
+        Initialize the matcher with configurable cost weights
+
+        The weights control the relative importance of different components in the
+        matching cost calculation. Higher weights make that component more important
+        in determining the final matching.
+
+        Optimized values for better detection performance:
+        - cost_class=1.0: Standard weight for classification cost
+        - cost_bbox=5.0: Higher weight for box coordinate accuracy
+        - cost_giou=2.0: Medium weight for box overlap quality
+
         Args:
-            img: PIL image
-            target: dict with fields 'boxes', 'labels'
-            is_train: whether to apply training transforms or validation transforms
-            
-        Returns:
-            img: tensor image
-            target: transformed target
+            cost_class: Weight for classification cost (negative log-likelihood)
+            cost_bbox: Weight for bounding box L1 distance cost
+            cost_giou: Weight for generalized IoU cost
         """
-        transforms = self.train_transforms if is_train else self.val_transforms
-        
-        if target is not None:
-            # Apply transformations to both image and target
-            img, target = transforms(img, target)
-            return img, target
-        else:
-            # Apply transformations to image only
-            img = transforms(img)
-            return img
-
-
-def create_position_embedding(hidden_dim, spatial_shape, device=None):
-    """
-    Create 2D sine-cosine positional embeddings.
-    
-    Args:
-        hidden_dim: embedding dimension
-        spatial_shape: tuple of spatial dimensions (height, width)
-        device: device to create the embeddings on
-        
-    Returns:
-        pos_embed: positional embeddings of shape (hidden_dim, height, width)
-    """
-    height, width = spatial_shape
-    
-    # Generate grid of positions
-    y_embed, x_embed = torch.meshgrid(torch.arange(height, device=device),
-                                     torch.arange(width, device=device),
-                                     indexing='ij')
-    
-    if hidden_dim % 4 != 0:
-        raise ValueError("Hidden dimension must be divisible by 4 for 2D position embedding")
-    
-    temperature = 10000.0
-    dim_t = torch.arange(hidden_dim // 4, dtype=torch.float32, device=device)
-    dim_t = temperature ** (2 * (dim_t // 2) / (hidden_dim // 4))
-    
-    # Position embeddings for x and y dimensions
-    pos_x = x_embed.flatten()[..., None] / dim_t
-    pos_y = y_embed.flatten()[..., None] / dim_t
-    
-    pos_x = torch.stack((pos_x[:, 0::2].sin(), pos_x[:, 1::2].cos()), dim=-1).flatten(-2)
-    pos_y = torch.stack((pos_y[:, 0::2].sin(), pos_y[:, 1::2].cos()), dim=-1).flatten(-2)
-    
-    # Combine embeddings
-    pos = torch.cat((pos_y, pos_x), dim=-1)
-    pos = pos.reshape(height, width, hidden_dim).permute(2, 0, 1)
-    
-    return pos
-
-
-def get_num_parameters(model):
-    """
-    Get the number of trainable parameters in a model.
-    
-    Args:
-        model: PyTorch model
-        
-    Returns:
-        total_params: number of trainable parameters
-    """
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    return total_params
-
-
-class HungarianMatcher(nn.Module):
-    """
-    Matcher based on Hungarian algorithm for Deformable DETR
-    
-    This matches predicted boxes to target boxes using a weighted sum of class prediction loss,
-    L1 box distance, and Generalized IoU.
-    
-    Args:
-        cost_class: weight for class prediction loss
-        cost_bbox: weight for L1 box distance
-        cost_giou: weight for Generalized IoU loss
-    """
-    def __init__(self, cost_class=1, cost_bbox=5, cost_giou=2):
-        super().__init__()
         self.cost_class = cost_class
         self.cost_bbox = cost_bbox
         self.cost_giou = cost_giou
-        
-    @torch.no_grad()
-    def forward(self, outputs, targets):
+
+    def __call__(self, outputs, targets):
         """
+        Match predictions to targets using the Hungarian algorithm
+
+        This method performs the following steps:
+        1. Extracts prediction logits and boxes from the model outputs
+        2. Computes classification cost using negative log-likelihood
+        3. Computes L1 distance between predicted and target boxes
+        4. Computes GIoU between predicted and target boxes
+        5. Combines these costs using the configured weights
+        6. Solves the resulting assignment problem using the Hungarian algorithm
+
+        The matching is performed independently for each image in the batch.
+
         Args:
-            outputs: dict containing:
-                'pred_logits': torch.Tensor of shape (batch_size, num_queries, num_classes)
-                'pred_boxes': torch.Tensor of shape (batch_size, num_queries, 4)
-            targets: list of dicts containing:
-                'labels': torch.Tensor of shape (num_target_boxes,)
-                'boxes': torch.Tensor of shape (num_target_boxes, 4)
-                
+            outputs: Dictionary containing model outputs with keys:
+                     - 'pred_logits': Classification logits [batch_size, num_queries, num_classes+1]
+                     - 'pred_boxes': Predicted boxes [batch_size, num_queries, 4] in (cx, cy, w, h) format
+            targets: List of dictionaries (one per image) with keys:
+                     - 'labels': Ground truth class indices [num_objects]
+                     - 'boxes': Ground truth boxes [num_objects, 4] in (cx, cy, w, h) format
+
         Returns:
-            indices: list of tuples (pred_idx, tgt_idx) containing the indices of matched predictions and targets
+            List of tuples (pred_indices, target_indices) for each image in the batch,
+            where pred_indices and target_indices are tensors of indices that form the
+            optimal bipartite matching
         """
-        bs, num_queries = outputs["pred_logits"].shape[:2]
-        
+        batch_size, num_queries = outputs["pred_logits"].shape[:2]
+
         # We flatten to compute the cost matrices in a batch
-        out_prob = outputs["pred_logits"].flatten(0, 1).softmax(-1)  # [batch_size * num_queries, num_classes]
+        # Apply temperature scaling for better probability distribution
+        temperature = 1.5  # Temperature > 1 makes distribution softer
+        out_prob = (outputs["pred_logits"] / temperature).flatten(0, 1).softmax(-1)  # [batch_size * num_queries, num_classes]
         out_bbox = outputs["pred_boxes"].flatten(0, 1)  # [batch_size * num_queries, 4]
-        
-        # List of indices for each batch element
-        indices = []
-        
-        # Ensure targets list is at least as long as the batch size
-        if len(targets) < bs:
-            # Pad targets list with empty targets if needed
-            device = outputs["pred_logits"].device
-            for _ in range(bs - len(targets)):
-                # Create an empty target with the right device
-                empty_target = {
-                    "labels": torch.tensor([], dtype=torch.int64, device=device),
-                    "boxes": torch.zeros((0, 4), dtype=torch.float32, device=device)
-                }
-                targets.append(empty_target)
-        
-        # Process each batch element separately
-        for b in range(bs):
-            try:
-                # Skip if target is missing or invalid
-                if b >= len(targets) or "labels" not in targets[b] or "boxes" not in targets[b]:
-                    empty_inds = ([], [])
-                    indices.append(empty_inds)
-                    continue
-                
-                tgt_ids = targets[b]["labels"]
-                tgt_bbox = targets[b]["boxes"]
-                
-                # Skip if no targets for this batch element
-                if tgt_ids.shape[0] == 0:
-                    indices.append(([], []))
-                    continue
-                
-                # Class cost: -log(p) where p is the probability of the correct class
-                # Shape: [num_queries, num_target_boxes]
-                cost_class = -out_prob[b * num_queries: (b + 1) * num_queries, tgt_ids]
-                
-                # Compute L1 cost between boxes
-                # Shape: [num_queries, num_target_boxes]
-                cost_bbox = torch.cdist(out_bbox[b * num_queries: (b + 1) * num_queries], tgt_bbox, p=1)
-                
-                # Compute GIoU cost between boxes
-                # Shape: [num_queries, num_target_boxes]
-                cost_giou = -generalized_box_iou(
-                    box_cxcywh_to_xyxy(out_bbox[b * num_queries: (b + 1) * num_queries]),
-                    box_cxcywh_to_xyxy(tgt_bbox)
-                )
-                
-                # Final cost matrix
-                C = self.cost_bbox * cost_bbox + self.cost_class * cost_class + self.cost_giou * cost_giou
-                
-                # Use Hungarian algorithm to find optimal assignment
-                from scipy.optimize import linear_sum_assignment
-                src_idx, tgt_idx = linear_sum_assignment(C.cpu().numpy())
-                
-                # Convert numpy arrays to torch tensors
-                device = outputs["pred_logits"].device
-                src_idx = torch.tensor(src_idx, dtype=torch.long, device=device)
-                tgt_idx = torch.tensor(tgt_idx, dtype=torch.long, device=device)
-                
-                # Add batch element index to the indices
-                indices.append((src_idx, tgt_idx))
-            
-            except Exception as e:
-                print(f"Error processing batch element {b}: {e}")
-                # Return empty indices for this batch element
-                indices.append(([], []))
-            
-        return indices
+
+        # Also concat the target labels and boxes
+        tgt_ids = torch.cat([v["labels"] for v in targets])
+        tgt_bbox = torch.cat([v["boxes"] for v in targets])
+
+        # Compute the classification cost
+        # Negative log likelihood between predictions and targets
+        # Apply focal-like weighting to focus more on hard examples
+        alpha = 0.25
+        gamma = 2.0
+        probs = out_prob[:, tgt_ids]
+        focal_weight = alpha * (1 - probs) ** gamma
+        cost_class = -focal_weight * torch.log(probs + 1e-8)
+
+        # Compute the L1 cost between boxes
+        # Scale the cost to be more balanced with classification cost
+        cost_bbox = torch.cdist(out_bbox, tgt_bbox, p=1)
+        # Apply scaling to prevent extremely high values
+        cost_bbox = torch.clamp(cost_bbox, max=10.0)
+
+        # Compute the GIoU cost between boxes
+        cost_giou = -generalized_box_iou(
+            box_cxcywh_to_xyxy(out_bbox),
+            box_cxcywh_to_xyxy(tgt_bbox)
+        )
+
+        # Final cost matrix with balanced weights
+        C = (
+            self.cost_bbox * cost_bbox +
+            self.cost_class * cost_class +
+            self.cost_giou * cost_giou
+        )
+
+        # Apply additional penalty for matching with predictions that have low confidence
+        # This helps reduce false positives
+        confidence_penalty = -torch.log(out_prob.max(dim=1)[0]).unsqueeze(1).expand_as(C)
+        C = C + 0.1 * confidence_penalty
+
+        # Reshape cost matrix to have batch dimension
+        C = C.view(batch_size, num_queries, -1)
+
+        # Get number of targets for each batch element
+        sizes = [len(v["boxes"]) for v in targets]
+
+        # Split the cost matrix by batch element
+        indices = [
+            linear_sum_assignment(c[i].cpu().detach().numpy())
+            for i, c in enumerate(C.split(sizes, -1))
+        ]
+
+        # Convert numpy arrays to torch tensors
+        return [
+            (
+                torch.as_tensor(i, dtype=torch.int64, device=out_prob.device),
+                torch.as_tensor(j, dtype=torch.int64, device=out_prob.device)
+            )
+            for i, j in indices
+        ]
+
+
+def linear_sum_assignment(cost_matrix):
+    """
+    Solve the linear sum assignment problem with multiple fallback implementations
+
+    This function implements a robust approach to solving the assignment problem by
+    trying multiple implementations in order of efficiency:
+
+    1. First attempts to use scipy's highly optimized implementation
+    2. If scipy is unavailable, tries to use networkx for medium to large matrices
+    3. For small matrices (≤10x10), uses a simple greedy approach for speed
+    4. For larger matrices without scipy/networkx, uses greedy with a warning
+
+    This multi-tiered approach ensures the function works in various environments
+    while maintaining reasonable performance characteristics.
+
+    Args:
+        cost_matrix: 2D numpy array where cost_matrix[i,j] is the cost of assigning
+                     row i to column j
+
+    Returns:
+        Tuple of (row_indices, col_indices) giving the optimal assignment that
+        minimizes the total cost
+    """
+    try:
+        # Always try to use scipy's highly optimized implementation first
+        from scipy.optimize import linear_sum_assignment as scipy_linear_sum_assignment
+        return scipy_linear_sum_assignment(cost_matrix)
+    except ImportError:
+        # If scipy is not available, use our own implementation
+        import numpy as np
+        x = np.array(cost_matrix)
+
+        # Handle empty matrices
+        if x.shape[0] == 0 or x.shape[1] == 0:
+            return np.array([]), np.array([])
+
+        # For very small matrices, use a simple greedy approach
+        if x.shape[0] <= 10 and x.shape[1] <= 10:
+            return _greedy_assignment(x)
+
+        # For larger matrices, use a more efficient algorithm
+        # Import networkx if available (much faster than our implementation)
+        try:
+            import networkx as nx
+            return _networkx_assignment(x)
+        except ImportError:
+            # Fall back to greedy for medium-sized matrices
+            if x.shape[0] <= 50 and x.shape[1] <= 50:
+                return _greedy_assignment(x)
+            else:
+                # For larger matrices, print a warning and use greedy anyway
+                print("Warning: Using slow assignment algorithm for large matrix. "
+                      "Install scipy or networkx for better performance.")
+                return _greedy_assignment(x)
+
+
+def _greedy_assignment(cost_matrix):
+    """Simple greedy assignment algorithm for small matrices."""
+    import numpy as np
+    x = np.array(cost_matrix)
+    row_ind, col_ind = [], []
+    mask = np.ones(x.shape, dtype=bool)
+
+    # Assign each row to its minimum cost column that's still available
+    for _ in range(min(x.shape[0], x.shape[1])):
+        i, j = np.unravel_index(np.argmin(np.where(mask, x, np.inf)), x.shape)
+        row_ind.append(i)
+        col_ind.append(j)
+        mask[i, :] = False
+        mask[:, j] = False
+
+    return np.array(row_ind), np.array(col_ind)
+
+
+def _networkx_assignment(cost_matrix):
+    """Use networkx's implementation of the Hungarian algorithm."""
+    import numpy as np
+    import networkx as nx
+
+    # Create a bipartite graph
+    n, m = cost_matrix.shape
+    G = nx.Graph()
+
+    # Add nodes with bipartite attribute
+    G.add_nodes_from(range(n), bipartite=0)
+    G.add_nodes_from(range(n, n+m), bipartite=1)
+
+    # Add edges with weights from cost matrix
+    for i in range(n):
+        for j in range(m):
+            G.add_edge(i, n+j, weight=cost_matrix[i, j])
+
+    # Find minimum weight matching
+    matching = nx.algorithms.matching.min_weight_matching(G)
+
+    # Extract row and column indices
+    row_ind, col_ind = [], []
+    for i, j in matching:
+        if i < n:  # i is a row index
+            row_ind.append(i)
+            col_ind.append(j - n)
+        else:  # j is a row index
+            row_ind.append(j)
+            col_ind.append(i - n)
+
+    return np.array(row_ind), np.array(col_ind)
+
+
+def plot_confusion_matrix(confusion_matrix, class_names):
+    """Plot confusion matrix as a heatmap.
+
+    Args:
+        confusion_matrix: Tensor of shape (num_classes, num_classes)
+        class_names: List of class names
+
+    Returns:
+        Matplotlib figure object for visualization
+    """
+    # Convert to numpy array
+    cm = confusion_matrix.cpu().numpy()
+
+    # Create figure and axis
+    plt.figure(figsize=(10, 8))
+
+    # Plot heatmap
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=class_names,
+                yticklabels=class_names)
+
+    plt.ylabel('True Label')
+    plt.xlabel('Predicted Label')
+    plt.title('Confusion Matrix')
+
+    # Save figure to buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+
+    # Close figure to avoid memory leaks
+    plt.close()
+
+    # Return image
+    return buf
+
+
+# Add missing import
+import io
+import os
+import sys
 
 
 class SmoothedValue:
-    """Track a series of values and provide access to smoothed values over a
-    window or the global series average.
+    """
+    Track and smooth a series of values for stable metric reporting
+
+    This class maintains a running history of values in a fixed-size window and
+    provides various statistical aggregations (median, mean, global average).
+    It's particularly useful for training metrics that can be noisy, providing
+    smoothed values that give a better indication of trends.
+
+    Key features:
+    - Maintains a deque of recent values with configurable window size
+    - Tracks global sum and count for accurate long-term averages
+    - Provides multiple statistical views of the data (median, mean, max, etc.)
+    - Supports custom formatting of output values
+    - Optional distributed training synchronization
     """
 
     def __init__(self, window_size=20, fmt=None):
@@ -336,14 +545,12 @@ class SmoothedValue:
         self.total += value * n
 
     def synchronize_between_processes(self):
-        """
-        Warning: does not synchronize the deque!
-        """
+        """Warning: does not synchronize the deque!"""
         if not is_dist_avail_and_initialized():
             return
         t = torch.tensor([self.count, self.total], dtype=torch.float64, device='cuda')
-        dist.barrier()
-        dist.all_reduce(t)
+        torch.distributed.barrier()
+        torch.distributed.all_reduce(t)
         t = t.tolist()
         self.count = int(t[0])
         self.total = t[1]
@@ -368,7 +575,7 @@ class SmoothedValue:
 
     @property
     def value(self):
-        return self.deque[-1] if len(self.deque) > 0 else None
+        return self.deque[-1]
 
     def __str__(self):
         return self.fmt.format(
@@ -380,6 +587,21 @@ class SmoothedValue:
 
 
 class MetricLogger:
+    """
+    Comprehensive metric tracking and logging system for training and validation
+
+    This class provides a centralized way to track multiple metrics during model training
+    and validation. It maintains a collection of SmoothedValue objects for each metric,
+    allowing for consistent handling and reporting of various statistics.
+
+    Key features:
+    - Tracks multiple metrics simultaneously with automatic smoothing
+    - Handles tensor values by automatically extracting scalar values
+    - Provides formatted string representation of all tracked metrics
+    - Supports distributed training with proper metric synchronization
+    - Allows dynamic addition of new metrics during training
+    """
+
     def __init__(self, delimiter="\t"):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
@@ -396,15 +618,12 @@ class MetricLogger:
             return self.meters[attr]
         if attr in self.__dict__:
             return self.__dict__[attr]
-        raise AttributeError("'{}' object has no attribute '{}'".format(
-            type(self).__name__, attr))
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{attr}'")
 
     def __str__(self):
         loss_str = []
         for name, meter in self.meters.items():
-            loss_str.append(
-                "{}: {}".format(name, str(meter))
-            )
+            loss_str.append(f"{name}: {meter}")
         return self.delimiter.join(loss_str)
 
     def synchronize_between_processes(self):
@@ -457,43 +676,18 @@ class MetricLogger:
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print('{} Total time: {} ({:.4f} s / it)'.format(
-            header, total_time_str, total_time / len(iterable)))
+        print(f'{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)')
 
 
 def is_dist_avail_and_initialized():
-    if not dist.is_available():
+    """Check if distributed training is available and initialized"""
+    if not torch.distributed.is_available():
         return False
-    if not dist.is_initialized():
+    if not torch.distributed.is_initialized():
         return False
     return True
 
 
-def get_world_size():
-    if not is_dist_avail_and_initialized():
-        return 1
-    return dist.get_world_size()
-
-
-def reduce_dict(input_dict, average=True):
-    """
-    Args:
-        input_dict (dict): all the values will be reduced
-        average (bool): whether to do average or sum
-    """
-    world_size = get_world_size()
-    if world_size < 2:
-        return input_dict
-    with torch.no_grad():
-        names = []
-        values = []
-        # sort the keys so that they are consistent across processes
-        for k in sorted(input_dict.keys()):
-            names.append(k)
-            values.append(input_dict[k])
-        values = torch.stack(values, dim=0)
-        dist.all_reduce(values)
-        if average:
-            values /= world_size
-        reduced_dict = {k: v for k, v in zip(names, values)}
-    return reduced_dict 
+def get_num_parameters(model):
+    """Get number of trainable parameters in a model"""
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
