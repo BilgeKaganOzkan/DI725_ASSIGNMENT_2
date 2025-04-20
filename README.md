@@ -177,28 +177,6 @@ The evaluation provides comprehensive detection metrics:
 - **mAP**: Mean Average Precision at various IoU thresholds (0.1, 0.3, 0.5, 0.7, 0.9)
 - **Confusion Matrix**: Visual representation of classification performance
 
-### Inference
-
-Run inference on individual images or directories:
-
-```bash
-python inference.py --config config/deformable_detr_config.yaml \
-                    --checkpoint checkpoints/deformable_detr_best.pth \
-                    --input path/to/image_or_directory
-```
-
-#### Inference Options
-
-| Argument | Description | Default |
-|----------|-------------|--------|
-| `--config` | Configuration file path | `config/deformable_detr_config.yaml` |
-| `--checkpoint` | Model checkpoint | required |
-| `--input` | Input image or directory | required |
-| `--output-dir` | Results directory | `results` |
-| `--device` | Inference device | auto-detected |
-| `--conf-threshold` | Detection confidence threshold | 0.5 |
-| `--visualize` | Generate visualizations | enabled |
-
 ## Advanced Features
 
 ### Configuration System
@@ -246,7 +224,3 @@ Contributions are welcome! Here's how you can help improve this project:
 4. **Documentation**: Help improve or translate the documentation
 
 Please follow the existing code style and add unit tests for any new functionality.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

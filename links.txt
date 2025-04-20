@@ -1,0 +1,2 @@
+github: https://github.com/BilgeKaganOzkan/DI725_ASSIGNMENT_2
+wandb: https://wandb.ai/ozkan-bilge-middle-east-technical-university/2697134-assignment2/table?nw=nwuserozkanbilge

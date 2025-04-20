@@ -1,0 +1,53 @@
+{
+  "os": "Linux-6.1.123+-x86_64-with-glibc2.35",
+  "python": "CPython 3.11.12",
+  "startedAt": "2025-04-20T16:30:28.386738Z",
+  "args": [
+    "--checkpoint",
+    "checkpoints/best_model.pth",
+    "--config",
+    "config/deformable_detr_config.yaml",
+    "--dataset-path",
+    "dataset",
+    "--annotations-file",
+    "metadata/test_annotations.json",
+    "--split",
+    "test",
+    "--device",
+    "cuda",
+    "--visualize"
+  ],
+  "program": "/content/drive/MyDrive/collapsee/eval.py",
+  "codePath": "eval.py",
+  "email": "ozkan.bilge@metu.edu.tr",
+  "root": "/content/drive/MyDrive/collapsee",
+  "host": "006e700a5c5a",
+  "executable": "/usr/bin/python3",
+  "codePathLocal": "eval.py",
+  "cpu_count": 6,
+  "cpu_count_logical": 12,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "253055008768",
+      "used": "43572064256"
+    }
+  },
+  "memory": {
+    "total": "89631739904"
+  },
+  "cpu": {
+    "count": 6,
+    "countLogical": 12
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA A100-SXM4-40GB",
+      "memoryTotal": "42949672960",
+      "cudaCores": 6912,
+      "architecture": "Ampere"
+    }
+  ],
+  "cudaVersion": "12.4"
+}

@@ -1,0 +1,16 @@
+{"time":"2025-04-20T16:30:28.393159025Z","level":"INFO","msg":"stream: starting","core version":"0.19.9","symlink path":"/content/drive/MyDrive/collapsee/wandb/run-20250420_163028-upn1sp6h/logs/debug-core.log"}
+{"time":"2025-04-20T16:30:28.735957526Z","level":"INFO","msg":"created new stream","id":"upn1sp6h"}
+{"time":"2025-04-20T16:30:28.737834404Z","level":"INFO","msg":"handler: started","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:30:28.737858894Z","level":"INFO","msg":"stream: started","id":"upn1sp6h"}
+{"time":"2025-04-20T16:30:28.737901145Z","level":"INFO","msg":"writer: Do: started","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:30:28.737942844Z","level":"INFO","msg":"sender: started","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:30:29.029614271Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-04-20T16:36:11.293249459Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-04-20T16:36:11.293395834Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-04-20T16:36:12.294724188Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading artifact run-upn1sp6h-class_metrics","runtime_seconds":2.122560948},{"desc":"uploading media/images/confusion_matrix_3_17ca78cb986689caf400.png","runtime_seconds":1.348399834,"progress":"43.2KB/43.2KB"},{"desc":"uploading media/images/visualizations_4_48401a4979a7f3e82b37.png","runtime_seconds":1.062537443,"progress":"176.0KB/204.0KB"},{"desc":"uploading media/images/visualizations_4_4896698306e7e9e6760c.png","runtime_seconds":1.062522161,"progress":"147.5KB/147.5KB"},{"desc":"uploading media/images/visualizations_4_36a9dfb8dd36aaefa977.png","runtime_seconds":1.062507675,"progress":"181.1KB/181.1KB"},{"desc":"uploading media/images/visualizations_4_0fcc04e00f7d7d13fe3b.png","runtime_seconds":1.062501955,"progress":"201.3KB/201.3KB"},{"desc":"uploading media/images/visualizations_4_621c84e5e9fdd1b9321e.png","runtime_seconds":1.062497478,"progress":"193.4KB/193.4KB"},{"desc":"uploading media/images/visualizations_4_9994c94f1c5c6fd91deb.png","runtime_seconds":1.062493375,"progress":"304.0KB/492.8KB"},{"desc":"uploading media/images/visualizations_4_8f0fa4c4985180035560.png","runtime_seconds":1.062483143,"progress":"212.3KB/212.3KB"},{"desc":"uploading media/images/visualizations_4_7c92d68ad51cb7c0323d.png","runtime_seconds":1.0624781699999999,"progress":"175.9KB/175.9KB"}],"total_operations":15}}
+{"time":"2025-04-20T16:36:13.486965407Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-04-20T16:36:13.762330379Z","level":"INFO","msg":"stream: closing","id":"upn1sp6h"}
+{"time":"2025-04-20T16:36:13.762565115Z","level":"INFO","msg":"handler: closed","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:36:13.762606599Z","level":"INFO","msg":"writer: Close: closed","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:36:13.762626738Z","level":"INFO","msg":"sender: closed","stream_id":"upn1sp6h"}
+{"time":"2025-04-20T16:36:13.764295164Z","level":"INFO","msg":"stream: closed","id":"upn1sp6h"}

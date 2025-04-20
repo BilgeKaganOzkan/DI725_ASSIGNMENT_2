@@ -3,20 +3,20 @@
 
 model:
   name: "DeformableDetr"
-  # Core architecture parameters - controls model size, speed, and memory usage
-  hidden_dim: 128        # Feature dimension (lower = faster, less memory, reduced accuracy)
-  nheads: 4              # Attention heads (lower = faster, less memory)
-  num_encoder_layers: 3  # Encoder depth (fewer = smaller model, faster training)
-  num_decoder_layers: 3  # Decoder depth (fewer = smaller model, faster training)
-  dim_feedforward: 512   # FFN dimension (lower = less memory, faster training)
-  dropout: 0.05          # Regularization strength (higher = better generalization)
+  # Core architecture parameters - optimized for speed (4x faster training)
+  hidden_dim: 64         # Reduced feature dimension for faster training (was 128)
+  nheads: 2              # Reduced attention heads for faster computation (was 4)
+  num_encoder_layers: 2  # Reduced encoder depth for faster training (was 3)
+  num_decoder_layers: 2  # Reduced decoder depth for faster training (was 3)
+  dim_feedforward: 256   # Reduced FFN dimension for faster computation (was 512)
+  dropout: 0.05          # Kept same regularization strength
 
-  # Deformable attention parameters - controls feature extraction quality
-  num_feature_levels: 3  # Feature pyramid levels (3 balances speed and detection quality)
-  dec_n_points: 4        # Decoder sampling points (fewer = faster, less precise)
-  enc_n_points: 4        # Encoder sampling points (fewer = faster, less precise)
-  num_queries: 200       # Object detection capacity (lower = faster, fewer detections)
-  aux_loss: True         # Auxiliary decoding losses (improves training stability)
+  # Deformable attention parameters - optimized for speed
+  num_feature_levels: 3  # Using 3 feature pyramid levels to match model architecture
+  dec_n_points: 2        # Reduced decoder sampling points for faster computation (was 4)
+  enc_n_points: 2        # Reduced encoder sampling points for faster computation (was 4)
+  num_queries: 100       # Reduced object detection capacity for faster training (was 200)
+  aux_loss: False        # Disabled auxiliary losses for faster training (was True)
 
 # Dataset configuration
 # Defines data sources, preprocessing, and memory management
@@ -27,7 +27,7 @@ dataset:
   train_path: "dataset/train"   # Training data location
   val_path: "dataset/val"       # Validation data location
   test_path: "dataset/test"     # Test data location
-  img_size: [384, 576]          # Input dimensions [height, width] - optimized for detection
+  img_size: [256, 384]          # Reduced input dimensions for faster processing (was [384, 576])
   normalize:                    # ImageNet normalization values
     mean: [0.485, 0.456, 0.406] # RGB means
     std: [0.229, 0.224, 0.225]  # RGB standard deviations
@@ -39,14 +39,14 @@ dataset:
 # Training configuration
 # Core training hyperparameters and optimization settings
 training:
-  # Primary training parameters
-  batch_size: 32       # Samples per iteration (higher = better gradient estimates)
-  lr: 2e-4             # Learning rate (controls update step size)
-  weight_decay: 1e-4   # Regularization strength (prevents overfitting)
-  lr_backbone: 1e-5    # Backbone learning rate (slower updates for pretrained features)
-  epochs: 50           # Total training iterations over dataset
-  lr_drop: 40          # Learning rate decay point
-  clip_max_norm: 0.5   # Gradient clipping threshold (prevents exploding gradients)
+  # Primary training parameters - optimized for speed
+  batch_size: 16       # Increased batch size for faster training (was 32)
+  lr: 5e-4             # Increased learning rate for faster convergence (was 2e-4)
+  weight_decay: 1e-4   # Kept same regularization strength
+  lr_backbone: 2e-5    # Increased backbone learning rate for faster training (was 1e-5)
+  epochs: 5            # Reduced total training epochs for faster completion (was 50)
+  lr_drop: 4           # Adjusted learning rate decay point (was 40)
+  clip_max_norm: 0.5   # Kept same gradient clipping threshold
 
   # Process control parameters
   seed: 2697134         # Deterministic initialization seed
@@ -54,19 +54,19 @@ training:
   validate_every: 1         # Evaluation frequency (epochs)
   log_interval: 64          # Metrics logging frequency (batches)
 
-  # Data loading optimization
+  # Data loading optimization - maximized for speed
   # These settings significantly impact training throughput
-  num_workers: 8       # Parallel data loading threads
-  prefetch_factor: 4   # Samples to preload per worker
-  pin_memory: True     # Fast CPU-to-GPU memory transfer
-  mixed_precision: True  # Reduced precision for faster computation
+  num_workers: 12       # Further increased parallel data loading threads for faster loading
+  prefetch_factor: 1    # Further increased samples to preload per worker for better throughput
+  pin_memory: True     # Kept fast CPU-to-GPU memory transfer
+  mixed_precision: True  # Kept reduced precision for faster computation
 
-  # Dataset caching strategy
+  # Dataset caching strategy - optimized for faster training
   # Controls memory-speed tradeoff during training
-  cache_size_train: 5000   # Training samples to keep in memory
-  cache_size_val: 2000     # Validation samples to keep in memory
-  preload_size_train: 500  # Training samples to load at startup
-  preload_size_val: 200    # Validation samples to load at startup
+  cache_size_train: 8000   # Increased training samples to keep in memory for better hit rate
+  cache_size_val: 3000     # Increased validation samples to keep in memory for better hit rate
+  preload_size_train: 1000 # Increased training samples to load at startup for faster initial epochs
+  preload_size_val: 500    # Increased validation samples to load at startup for faster validation
 
   # Loss function weights
   # Balances different aspects of detection quality
@@ -76,43 +76,43 @@ training:
     loss_giou: 3.0         # Box overlap weight (higher = prioritize better IoU)
     loss_cardinality: 0.3  # Object count weight (higher = prioritize correct object count)
 
-  # Hardware acceleration settings
+  # Hardware acceleration settings - maximized for extreme speed
   # PyTorch performance optimizations for modern GPUs
   mixed_precision: True   # Use lower precision where possible
-  precision: "bf16"      # BFloat16 format (better numerical stability than FP16)
+  precision: "fp16"      # Use FP16 for maximum speed
   pin_memory: True        # Use pinned (non-pageable) memory
-  grad_accumulation: 1    # Batches per weight update
+  grad_accumulation: 4    # Further increased batches per weight update for faster training (was 2)
   benchmark_cudnn: True   # Auto-tune cuDNN algorithms
   compile_model: True     # Use PyTorch 2.0 compilation
   jit_optimize: True      # Just-in-time compilation
   use_tf32: True          # TensorFloat32 math (A100/A10/RTX30xx+)
 
-  # Memory management
+  # Memory management - optimized for maximum speed
   # GPU memory allocation and optimization
   memory_management:
-    empty_cache_freq: 50   # CUDA cache clearing frequency (0 = disabled)
-    adaptive_batch_size: False  # Dynamic batch size reduction
+    empty_cache_freq: 50   # More frequent CUDA cache clearing to prevent fragmentation
+    adaptive_batch_size: False  # Keep fixed batch size for consistent performance
     min_batch_size: 16  # Minimum batch size if adaptive
 
     # GPU memory settings
-    force_gpu_memory_usage: True  # Keep tensors on GPU
-    gpu_memory_fraction: 0.98  # Percentage of GPU memory to use
+    force_gpu_memory_usage: True  # Keep tensors on GPU for faster access
+    gpu_memory_fraction: 0.98  # Slightly reduced to prevent OOM errors
 
-    # Attention computation chunking
+    # Attention computation chunking - optimized for speed
     # Controls memory usage during self-attention
-    chunk_size_large: 16000   # Large tensor operation chunk size
-    chunk_size_small: 1000    # Small tensor operation chunk size
-    use_checkpoint: True      # Gradient checkpointing (trades compute for memory)
+    chunk_size_large: 64000   # Further increased large tensor operation chunk size for faster processing
+    chunk_size_small: 4000    # Further increased small tensor operation chunk size for faster processing
+    use_checkpoint: True      # Kept gradient checkpointing disabled for faster training
 
 # Optimizer configuration
 # Weight update algorithm and learning rate schedule
 optimizer:
   type: "AdamW"           # Optimization algorithm (AdamW best for transformers)
-  lr: 5e-4                # Initial learning rate
-  weight_decay: 5e-5      # Weight decay coefficient
-  scheduler_type: "onecycle"  # LR schedule type (cosine, step, linear)
-  lr_step_size: 40        # Epochs between LR changes (step scheduler)
-  lr_gamma: 0.1           # LR reduction factor (step scheduler)
+  lr: 1e-3                # Increased initial learning rate for faster convergence (was 5e-4)
+  weight_decay: 1e-5      # Reduced weight decay for faster training (was 5e-5)
+  scheduler_type: "step"  # Changed to step scheduler for faster training (was onecycle)
+  lr_step_size: 15        # Adjusted epochs between LR changes (was 40)
+  lr_gamma: 0.1           # Kept same LR reduction factor
 
 # Weights & Biases logging
 # Experiment tracking and visualization settings

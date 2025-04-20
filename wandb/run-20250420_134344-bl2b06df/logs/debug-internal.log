@@ -1,0 +1,16 @@
+{"time":"2025-04-20T13:43:44.633039612Z","level":"INFO","msg":"stream: starting","core version":"0.19.9","symlink path":"/content/drive/MyDrive/collapsee/wandb/run-20250420_134344-bl2b06df/logs/debug-core.log"}
+{"time":"2025-04-20T13:43:44.971727009Z","level":"INFO","msg":"created new stream","id":"bl2b06df"}
+{"time":"2025-04-20T13:43:44.972256621Z","level":"INFO","msg":"stream: started","id":"bl2b06df"}
+{"time":"2025-04-20T13:43:44.972292975Z","level":"INFO","msg":"sender: started","stream_id":"bl2b06df"}
+{"time":"2025-04-20T13:43:44.972308629Z","level":"INFO","msg":"writer: Do: started","stream_id":"bl2b06df"}
+{"time":"2025-04-20T13:43:44.972391658Z","level":"INFO","msg":"handler: started","stream_id":"bl2b06df"}
+{"time":"2025-04-20T13:43:45.30179504Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-04-20T16:20:41.163779084Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-04-20T16:20:41.164241526Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-04-20T16:20:42.168077327Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"updating run config","runtime_seconds":0.072971892}],"total_operations":1}}
+{"time":"2025-04-20T16:20:44.636634015Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-04-20T16:20:46.189466592Z","level":"INFO","msg":"stream: closing","id":"bl2b06df"}
+{"time":"2025-04-20T16:20:46.189598432Z","level":"INFO","msg":"handler: closed","stream_id":"bl2b06df"}
+{"time":"2025-04-20T16:20:46.189637032Z","level":"INFO","msg":"writer: Close: closed","stream_id":"bl2b06df"}
+{"time":"2025-04-20T16:20:46.189692364Z","level":"INFO","msg":"sender: closed","stream_id":"bl2b06df"}
+{"time":"2025-04-20T16:20:46.191029904Z","level":"INFO","msg":"stream: closed","id":"bl2b06df"}

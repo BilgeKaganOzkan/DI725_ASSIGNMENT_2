@@ -1,0 +1,1 @@
+{"columns": ["Class", "AP", "Precision", "Recall", "F1"], "data": [["Human", 0, 0, 0, 0], ["Car", 0, 0, 0, 0], ["Truck", 0, 0, 0, 0], ["Van", 0, 0, 0, 0], ["Motorbike", 0, 0, 0, 0], ["Bicycle", 0, 0, 0, 0], ["Bus", 0, 0, 0, 0], ["Trailer", 0, 0, 0, 0]]}

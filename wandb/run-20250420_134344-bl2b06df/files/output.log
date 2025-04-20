@@ -1,0 +1,1907 @@
+Loading datasets...
+Loaded 22976 annotations from metadata/train_annotations.json (from 'annotations' key)
+Loaded 4923 annotations from metadata/val_annotations.json (from 'annotations' key)
+Dataset size: 22976 training examples, 4923 validation examples
+Image size: [256, 384]
+Using full dataset (no sampling)
+Cache configuration:
+  - Train cache size: 8000 samples
+  - Val cache size: 3000 samples
+  - Train preload size: 1000 samples
+  - Val preload size: 500 samples
+Using optimized dataset: 22976 training examples and 4923 validation examples.
+Batch size: 16 (from config)
+Batch size 16 and grad_accumulation 4 values taken from config file.
+Training parameters:
+  - Epochs: 20
+  - Learning rate: 1e-3
+  - Weight decay: 1e-5
+  - Batch size: 16
+  - Gradient accumulation: 4
+  - Effective batch size: 64
+  - Workers: 12
+  - Prefetch factor: 1
+  - Pin memory: True
+  - Mixed precision: True
+DataLoader configuration:
+  - Number of workers: 12
+  - Prefetch factor: 1
+  - Pin memory: True
+  - Persistent workers: True
+Training data: 22976 samples, 1436 batches
+Validation data: 4923 samples, 308 batches
+Building model...
+Memory management settings:
+  - Gradient checkpointing: True
+  - Large chunk size: 64000
+  - Small chunk size: 4000
+
+Model Configuration Parameters:
+  - hidden_dim: 64
+  - nheads: 2
+  - num_encoder_layers: 2
+  - num_decoder_layers: 2
+  - dim_feedforward: 256
+  - dropout: 0.05
+  - num_feature_levels: 3
+  - enc_n_points: 2
+  - dec_n_points: 2
+  - num_queries: 100
+  - aux_loss: False
+  - use_checkpoint: True
+  - chunk_size_large: 64000
+  - chunk_size_small: 4000
+
+DeformableDetrModel Parameters:
+  - num_classes: 8
+  - hidden_dim: 64
+  - nheads: 2
+  - num_encoder_layers: 2
+  - num_decoder_layers: 2
+  - dim_feedforward: 256
+  - dropout: 0.05
+  - num_feature_levels: 3
+  - enc_n_points: 2
+  - dec_n_points: 2
+  - num_queries: 100
+  - aux_loss: False
+  - use_checkpoint: True
+  - chunk_size_large: 64000
+  - chunk_size_small: 4000
+Model has 25,782,149 trainable parameters
+Applying GPU memory optimizations for faster training...
+Using mixed precision for model weights (memory savings and better stability)
+Using BFloat16 for model weights
+Model optimizations enabled for A100 GPU
+Using standard AdamW optimizer
+
+GPU Memory Status (Before Training Begins):
+  Total GPU memory: 39.56 GB
+  Allocated memory: 0.10 GB
+  Reserved memory: 0.14 GB
+  Free memory: 39.42 GB
+Starting training for 20 epochs...
+
+================================================================================
+STARTING TRAINING: 20 EPOCHS
+================================================================================
+
+
+==================================================
+EPOCH 1/20
+==================================================
+Starting training for epoch 1...
+Initial GPU memory: 0.11 GB allocated, 0.15 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 1:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+Sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running model forward pass for batch 1
+Moving model components to cuda:0
+Actual backbone channel counts: {'layer2': 512, 'layer3': 1024, 'layer4': 2048}
+Initialized input_proj for layer2 with 512 input channels
+Created and moved all projection layers to cuda:0
+  return fn(*args, **kwargs)
+Model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Computing loss for batch 1
+Batch 1/1436, Loss: 51.4699
+Epoch 1: 100%|███| 1436/1436 [25:14<00:00,  1.05s/it]
+Batch 51/1436, Loss: 16.8485
+Batch 101/1436, Loss: 11.9612
+Batch 151/1436, Loss: 10.9165
+Batch 201/1436, Loss: 11.3597
+Batch 251/1436, Loss: 11.0689
+Batch 301/1436, Loss: 12.1759
+Batch 351/1436, Loss: 11.5758
+Batch 401/1436, Loss: 10.9258
+Batch 451/1436, Loss: 11.3884
+Batch 501/1436, Loss: 10.6637
+Batch 551/1436, Loss: 11.6934
+Batch 601/1436, Loss: 11.4503
+Batch 651/1436, Loss: 10.6267
+Batch 701/1436, Loss: 11.4064
+Batch 751/1436, Loss: 10.7501
+Batch 801/1436, Loss: 10.4085
+Batch 851/1436, Loss: 8.6235
+Batch 901/1436, Loss: 10.3493
+Batch 951/1436, Loss: 10.2989
+Batch 1001/1436, Loss: 9.9906
+Batch 1051/1436, Loss: 8.9098
+Batch 1101/1436, Loss: 10.7958
+Batch 1151/1436, Loss: 11.0257
+Batch 1201/1436, Loss: 10.7652
+Batch 1251/1436, Loss: 10.4598
+Batch 1301/1436, Loss: 10.0235
+Batch 1351/1436, Loss: 10.4823
+Batch 1401/1436, Loss: 10.8736
+Training for epoch 1 completed successfully.
+Cleared CUDA cache between training and validation
+Forced garbage collection to free CPU memory
+Starting validation for epoch 1...
+BFloat16 precision supported on NVIDIA A100-SXM4-40GB (SM 8.0)
+Using torch.bfloat16 for mixed precision training
+Validation: 100%|██| 308/308 [05:52<00:00,  1.14s/it]
+Validation sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Validation target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running validation model forward pass
+Validation model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Val batch 1/308, Loss: 12.2397
+Stored outputs for batch 1, total outputs: 1
+Stored targets for batch 1, total targets: 16
+Val batch 51/308, Loss: 11.0126
+Stored outputs for batch 51, total outputs: 51
+Stored targets for batch 51, total targets: 816
+Val batch 101/308, Loss: 10.1160
+Stored outputs for batch 101, total outputs: 101
+Stored targets for batch 101, total targets: 1616
+Val batch 151/308, Loss: 11.2554
+Stored outputs for batch 151, total outputs: 151
+Stored targets for batch 151, total targets: 2416
+Val batch 201/308, Loss: 11.0867
+Stored outputs for batch 201, total outputs: 201
+Stored targets for batch 201, total targets: 3216
+Val batch 251/308, Loss: 11.5920
+Stored outputs for batch 251, total outputs: 251
+Stored targets for batch 251, total targets: 4016
+Val batch 301/308, Loss: 11.6746
+Stored outputs for batch 301, total outputs: 301
+Stored targets for batch 301, total targets: 4816
+Validation stats: {'loss': 10.828893208588687, 'loss_ce': 0.06934668018041154, 'loss_bbox': 0.8725991869321117, 'loss_giou': 8.50326744457344, 'loss_cardinality': 1.3836798969027284}
+
+Number of collected outputs: 308
+Number of validation targets: 4923
+Using most common tensor sizes: logits=16, boxes=16
+Size distribution: logits={16: 307, 11: 1}, boxes={16: 307, 11: 1}
+Batch 307 has different tensor sizes: logits=torch.Size([100, 11, 9]), boxes=torch.Size([100, 11, 4])
+Expected sizes: logits=(*,16,*), boxes=(*,16,*)
+This is typically caused by the last batch having a different size.
+Padding tensors to ensure consistent sizes before concatenation...
+  Padded batch 307 logits from shape torch.Size([100, 11, 9]) to torch.Size([100, 16, 9])
+  Padded batch 307 boxes from shape torch.Size([100, 11, 4]) to torch.Size([100, 16, 4])
+Successfully concatenated all outputs: pred_logits shape=torch.Size([30800, 16, 9]), pred_boxes shape=torch.Size([30800, 16, 4])
+
+Computing detection metrics...
+Number of validation samples: 4923
+Number of predictions: 30800
+Overall confidence score statistics:
+  Max: 1.0000
+  Min: 0.0000
+  Mean: 0.1123
+  Median: 0.0001
+Computing detection metrics with 4923 targets and 30800 predictions...
+
+Validation Debug Info:
+  Number of predictions: 16
+  Max confidence score: 0.0181
+  Min confidence score: 0.0058
+  Mean confidence score: 0.0094
+  Number of ground truth boxes: 3
+
+Detailed Validation Debug Info:
+  Total predictions: 78768
+  Total ground truth boxes: 19814
+  Total matches: 150
+  Confidence scores: max=0.0203, min=0.0000, avg=0.0018
+  IoU values: max=0.6394, min=0.0000, avg=0.0095
+
+Metrics at different IoU thresholds:
+  IoU=0.1:
+    Precision: 0.0019
+    Recall: 0.0076
+    F1 Score: 0.0030
+    mAP: 0.0015
+    Matches: 150
+  IoU=0.3:
+    Precision: 0.0002
+    Recall: 0.0010
+    F1 Score: 0.0004
+    mAP: 0.0002
+    Matches: 19
+  IoU=0.5:
+    Precision: 0.0000
+    Recall: 0.0001
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 1
+  IoU=0.7:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+
+COCO-style mAP (IoU=0.5:0.95): 0.0000
+
+Standard Metrics (IoU=0.5 or first threshold):
+  Precision: 0.0000
+  Recall: 0.0001
+  F1 Score: 0.0000
+  mAP: 0.0000
+  Accuracy: 0.0000
+Detection metrics computed successfully
+Metric added to result: precision = 1.2695510867357303e-05
+Metric added to result: recall = 5.04693650953871e-05
+Metric added to result: f1 = 2.0287679292365742e-05
+Metric added to result: accuracy = 1.2695510867357303e-05
+Metric added to result: mAP = 7.887430590610803e-06
+List metric added to result: class_precision = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1 = [0.0, 0.0, 0.0]...
+Metric added to result: mAP@0.1 = 0.0015084140934635308
+Metric added to result: precision@0.1 = 0.0019043266301035954
+Metric added to result: recall@0.1 = 0.007570404764308065
+Metric added to result: f1@0.1 = 0.003043151893854862
+List metric added to result: class_precision@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.1 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.1 = 150
+Metric added to result: mAP@0.3 = 0.0001902503043776096
+Metric added to result: precision@0.3 = 0.00024121470647978874
+Metric added to result: recall@0.3 = 0.0009589179368123549
+Metric added to result: f1@0.3 = 0.0003854659065549492
+List metric added to result: class_precision@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.3 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.3 = 19
+Metric added to result: mAP@0.5 = 7.887430590610803e-06
+Metric added to result: precision@0.5 = 1.2695510867357303e-05
+Metric added to result: recall@0.5 = 5.04693650953871e-05
+Metric added to result: f1@0.5 = 2.0287679292365742e-05
+List metric added to result: class_precision@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.5 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.5 = 1
+Metric added to result: mAP@0.7 = 0.0
+Metric added to result: precision@0.7 = 0.0
+Metric added to result: recall@0.7 = 0.0
+Metric added to result: f1@0.7 = 0.0
+List metric added to result: class_precision@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.7 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.7 = 0
+Metric added to result: mAP_coco = 3.943715295305401e-06
+
+Detection metrics:
+  Precision: 0.0000
+  Recall: 0.0001
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+Status of metrics added to result dictionary:
+  precision: 0.0000 - Successfully added
+  recall: 0.0001 - Successfully added
+  f1: 0.0000 - Successfully added
+  accuracy: 0.0000 - Successfully added
+  mAP: 0.0000 - Successfully added
+
+Class-wise metrics:
+  Human     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Car       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Truck     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Van       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Motorbike : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bicycle   : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bus       : Precision=0.0001, Recall=0.0104, F1=0.0001
+  Trailer   : Precision=0.0000, Recall=0.0000, F1=0.0000
+
+Confusion Matrix:
+[[ 0  0  0  0 12  0  0  2]
+ [ 0  0  0  0  3  0  1  0]
+ [ 0  0  0  0  7  0  5  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  3  0  1  0]
+ [ 0  0  0  0  2  0  0  0]]
+
+Wandb is available for logging metrics
+
+Sending the following validation metrics to Wandb:
+  step: 1796
+  val/accuracy: 1.2695510867357303e-05
+  val/precision: 1.2695510867357303e-05
+  val/recall: 5.04693650953871e-05
+  val/f1: 2.0287679292365742e-05
+  val/mAP: 7.887430590610803e-06
+  val/mAP@0.1: 0.0015084140934635308
+  val/precision@0.1: 0.0019043266301035954
+  val/recall@0.1: 0.007570404764308065
+  val/f1@0.1: 0.003043151893854862
+  val/mAP@0.3: 0.0001902503043776096
+  val/precision@0.3: 0.00024121470647978874
+  val/recall@0.3: 0.0009589179368123549
+  val/f1@0.3: 0.0003854659065549492
+  val/mAP@0.5: 7.887430590610803e-06
+  val/precision@0.5: 1.2695510867357303e-05
+  val/recall@0.5: 5.04693650953871e-05
+  val/f1@0.5: 2.0287679292365742e-05
+  val/mAP@0.7: 0.0
+  val/precision@0.7: 0.0
+  val/recall@0.7: 0.0
+  val/f1@0.7: 0.0
+  val/mAP_coco: 3.943715295305401e-06
+  val/avg_iou: 0.009516923557153438
+  val/avg_confidence: 0.001793041836645166
+  val/total_matches: 150
+  val/loss: 10.828893208588687
+  val/loss_ce: 0.06934668018041154
+  val/loss_bbox: 0.8725991869321117
+  val/loss_giou: 8.50326744457344
+  val/loss_cardinality: 1.3836798969027284
+  val/class/Human/precision: 0.0
+  val/class/Human/recall: 0.0
+  val/class/Human/f1: 0.0
+  val/class/Car/precision: 0.0
+  val/class/Car/recall: 0.0
+  val/class/Car/f1: 0.0
+  val/class/Truck/precision: 0.0
+  val/class/Truck/recall: 0.0
+  val/class/Truck/f1: 0.0
+  val/class/Van/precision: 0.0
+  val/class/Van/recall: 0.0
+  val/class/Van/f1: 0.0
+  val/class/Motorbike/precision: 0.0
+  val/class/Motorbike/recall: 0.0
+  val/class/Motorbike/f1: 0.0
+  val/class/Bicycle/precision: 0.0
+  val/class/Bicycle/recall: 0.0
+  val/class/Bicycle/f1: 0.0
+  val/class/Bus/precision: 6.309944472488642e-05
+  val/class/Bus/recall: 0.010416666666666666
+  val/class/Bus/f1: 0.0001254390366281987
+  val/class/Trailer/precision: 0.0
+  val/class/Trailer/recall: 0.0
+  val/class/Trailer/f1: 0.0
+Successfully logged validation metrics to Wandb
+GPU memory after validation: 0.37GB allocated, 0.43GB reserved
+
+Validation completed. Returned metrics:
+  precision: 1.2695510867357303e-05
+  recall: 5.04693650953871e-05
+  f1: 2.0287679292365742e-05
+  accuracy: 1.2695510867357303e-05
+  mAP: 7.887430590610803e-06
+Validation for epoch 1 completed successfully.
+Learning rate updated: 0.001000
+
+✅ Saved new best model with validation loss: 10.8289
+
+**************************************************
+EPOCH 1/20 SUMMARY:
+**************************************************
+  Time: 1966.88 seconds (11.68 samples/second)
+  Training Loss: 11.4143
+  Validation Loss: 10.8289 (previous best: 10.8289)
+  Learning Rate: 0.001000
+  Train Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Val Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+Cleared CUDA cache after epoch completion
+
+--------------------------------------------------------------------------------
+
+Validation metrics available at epoch end:
+Val_stats keys: ['loss', 'loss_ce', 'loss_bbox', 'loss_giou', 'loss_cardinality', 'precision', 'recall', 'f1', 'accuracy', 'mAP', 'class_precision', 'class_recall', 'class_f1', 'mAP@0.1', 'precision@0.1', 'recall@0.1', 'f1@0.1', 'class_precision@0.1', 'class_recall@0.1', 'class_f1@0.1', 'matches@0.1', 'mAP@0.3', 'precision@0.3', 'recall@0.3', 'f1@0.3', 'class_precision@0.3', 'class_recall@0.3', 'class_f1@0.3', 'matches@0.3', 'mAP@0.5', 'precision@0.5', 'recall@0.5', 'f1@0.5', 'class_precision@0.5', 'class_recall@0.5', 'class_f1@0.5', 'matches@0.5', 'mAP@0.7', 'precision@0.7', 'recall@0.7', 'f1@0.7', 'class_precision@0.7', 'class_recall@0.7', 'class_f1@0.7', 'matches@0.7', 'mAP_coco', 'detection_metrics']
+  precision: 1.2695510867357303e-05
+  recall: 5.04693650953871e-05
+  f1: 2.0287679292365742e-05
+  accuracy: 1.2695510867357303e-05
+  mAP: 7.887430590610803e-06
+  class_precision: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.309944472488642e-05, 0.0]
+  class_recall: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.010416666666666666, 0.0]
+  class_f1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0001254390366281987, 0.0]
+  mAP@0.1: 0.0015084140934635308
+  precision@0.1: 0.0019043266301035954
+  recall@0.1: 0.007570404764308065
+  f1@0.1: 0.003043151893854862
+  class_precision@0.1: [0.0, 0.0, 0.0, 0.0, 0.00019612842489261968, 0.0, 0.0029025744573447755, 0.008968609865470852]
+  class_recall@0.1: [0.0, 0.0, 0.0, 0.0, 0.24390243902439024, 0.0, 0.4791666666666667, 0.25405405405405407]
+  class_f1@0.1: [0.0, 0.0, 0.0, 0.0, 0.0003919416790781532, 0.0, 0.00577019568489714, 0.017325592111326144]
+  matches@0.1: 150
+  mAP@0.3: 0.0001902503043776096
+  precision@0.3: 0.00024121470647978874
+  recall@0.3: 0.0009589179368123549
+  f1@0.3: 0.0003854659065549492
+  class_precision@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0005678950025239778, 0.0009541074324968991]
+  class_recall@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.09375, 0.02702702702702703]
+  class_f1@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0011289513296537882, 0.00184314809694959]
+  matches@0.3: 19
+  mAP@0.5: 7.887430590610803e-06
+  precision@0.5: 1.2695510867357303e-05
+  recall@0.5: 5.04693650953871e-05
+  f1@0.5: 2.0287679292365742e-05
+  class_precision@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.309944472488642e-05, 0.0]
+  class_recall@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.010416666666666666, 0.0]
+  class_f1@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0001254390366281987, 0.0]
+  matches@0.5: 1
+  mAP@0.7: 0.0
+  precision@0.7: 0.0
+  recall@0.7: 0.0
+  f1@0.7: 0.0
+  class_precision@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.7: 0
+  mAP_coco: 3.943715295305401e-06
+
+Important Validation Metrics:
+  Precision: 0.0000
+  Recall: 0.0001
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+==================================================
+EPOCH 2/20
+==================================================
+Starting training for epoch 2...
+Initial GPU memory: 0.32 GB allocated, 0.41 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 2:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+Batch 1/1436, Loss: 10.0376
+Epoch 2: 100%|███| 1436/1436 [25:21<00:00,  1.06s/it]
+Batch 51/1436, Loss: 11.4756
+Batch 101/1436, Loss: 11.4087
+Batch 151/1436, Loss: 11.4262
+Batch 201/1436, Loss: 10.0843
+Batch 251/1436, Loss: 10.9959
+Batch 301/1436, Loss: 10.3457
+Batch 351/1436, Loss: 10.0126
+Batch 401/1436, Loss: 10.3709
+Batch 451/1436, Loss: 10.8321
+Batch 501/1436, Loss: 10.5195
+Batch 551/1436, Loss: 10.6840
+Batch 601/1436, Loss: 10.1929
+Batch 651/1436, Loss: 10.9799
+Batch 701/1436, Loss: 10.3875
+Batch 751/1436, Loss: 10.1667
+Batch 801/1436, Loss: 10.7842
+Batch 851/1436, Loss: 10.3834
+Batch 901/1436, Loss: 11.5749
+Batch 951/1436, Loss: 10.4692
+Batch 1001/1436, Loss: 10.6746
+Batch 1051/1436, Loss: 11.2217
+Batch 1101/1436, Loss: 10.6511
+Batch 1151/1436, Loss: 10.7013
+Batch 1201/1436, Loss: 11.3849
+Batch 1251/1436, Loss: 11.0844
+Batch 1301/1436, Loss: 10.2998
+Batch 1351/1436, Loss: 11.4903
+Batch 1401/1436, Loss: 10.1941
+Training for epoch 2 completed successfully.
+Cleared CUDA cache between training and validation
+Forced garbage collection to free CPU memory
+Starting validation for epoch 2...
+BFloat16 precision supported on NVIDIA A100-SXM4-40GB (SM 8.0)
+Using torch.bfloat16 for mixed precision training
+Validation: 100%|██| 308/308 [01:03<00:00,  4.86it/s]
+Validation sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Validation target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running validation model forward pass
+Validation model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Val batch 1/308, Loss: 13.5214
+Stored outputs for batch 1, total outputs: 1
+Stored targets for batch 1, total targets: 16
+Val batch 51/308, Loss: 11.0854
+Stored outputs for batch 51, total outputs: 51
+Stored targets for batch 51, total targets: 816
+Val batch 101/308, Loss: 10.5216
+Stored outputs for batch 101, total outputs: 101
+Stored targets for batch 101, total targets: 1616
+Val batch 151/308, Loss: 11.6178
+Stored outputs for batch 151, total outputs: 151
+Stored targets for batch 151, total targets: 2416
+Val batch 201/308, Loss: 10.7589
+Stored outputs for batch 201, total outputs: 201
+Stored targets for batch 201, total targets: 3216
+Val batch 251/308, Loss: 11.4746
+Stored outputs for batch 251, total outputs: 251
+Stored targets for batch 251, total targets: 4016
+Val batch 301/308, Loss: 11.6527
+Stored outputs for batch 301, total outputs: 301
+Stored targets for batch 301, total targets: 4816
+Validation stats: {'loss': 10.92579600325144, 'loss_ce': 0.06503168316316102, 'loss_bbox': 0.902197432353512, 'loss_giou': 8.574886990832043, 'loss_cardinality': 1.3836798969027284}
+
+Number of collected outputs: 308
+Number of validation targets: 4923
+Using most common tensor sizes: logits=16, boxes=16
+Size distribution: logits={16: 307, 11: 1}, boxes={16: 307, 11: 1}
+Batch 307 has different tensor sizes: logits=torch.Size([100, 11, 9]), boxes=torch.Size([100, 11, 4])
+Expected sizes: logits=(*,16,*), boxes=(*,16,*)
+This is typically caused by the last batch having a different size.
+Padding tensors to ensure consistent sizes before concatenation...
+  Padded batch 307 logits from shape torch.Size([100, 11, 9]) to torch.Size([100, 16, 9])
+  Padded batch 307 boxes from shape torch.Size([100, 11, 4]) to torch.Size([100, 16, 4])
+Successfully concatenated all outputs: pred_logits shape=torch.Size([30800, 16, 9]), pred_boxes shape=torch.Size([30800, 16, 4])
+
+Computing detection metrics...
+Number of validation samples: 4923
+Number of predictions: 30800
+Overall confidence score statistics:
+  Max: 1.0000
+  Min: 0.0000
+  Mean: 0.1128
+  Median: 0.0000
+Computing detection metrics with 4923 targets and 30800 predictions...
+
+Validation Debug Info:
+  Number of predictions: 16
+  Max confidence score: 0.0190
+  Min confidence score: 0.0013
+  Mean confidence score: 0.0081
+  Number of ground truth boxes: 3
+
+Detailed Validation Debug Info:
+  Total predictions: 78768
+  Total ground truth boxes: 19814
+  Total matches: 48
+  Confidence scores: max=0.0304, min=0.0000, avg=0.0014
+  IoU values: max=0.6258, min=0.0000, avg=0.0087
+
+Metrics at different IoU thresholds:
+  IoU=0.1:
+    Precision: 0.0006
+    Recall: 0.0024
+    F1 Score: 0.0010
+    mAP: 0.0002
+    Matches: 48
+  IoU=0.3:
+    Precision: 0.0002
+    Recall: 0.0008
+    F1 Score: 0.0003
+    mAP: 0.0001
+    Matches: 15
+  IoU=0.5:
+    Precision: 0.0002
+    Recall: 0.0008
+    F1 Score: 0.0003
+    mAP: 0.0001
+    Matches: 15
+  IoU=0.7:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+
+COCO-style mAP (IoU=0.5:0.95): 0.0000
+
+Standard Metrics (IoU=0.5 or first threshold):
+  Precision: 0.0002
+  Recall: 0.0008
+  F1 Score: 0.0003
+  mAP: 0.0001
+  Accuracy: 0.0002
+Detection metrics computed successfully
+Metric added to result: precision = 0.00019043266301035954
+Metric added to result: recall = 0.0007570404764308065
+Metric added to result: f1 = 0.0003043151893854862
+Metric added to result: accuracy = 0.00019043266301035954
+Metric added to result: mAP = 6.690932448346002e-05
+List metric added to result: class_precision = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1 = [0.0, 0.0, 0.0]...
+Metric added to result: mAP@0.1 = 0.00021410983834707205
+Metric added to result: precision@0.1 = 0.0006093845216331506
+Metric added to result: recall@0.1 = 0.0024225295245785807
+Metric added to result: f1@0.1 = 0.000973808606033556
+List metric added to result: class_precision@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.1 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.1 = 48
+Metric added to result: mAP@0.3 = 6.690932448346002e-05
+Metric added to result: precision@0.3 = 0.00019043266301035954
+Metric added to result: recall@0.3 = 0.0007570404764308065
+Metric added to result: f1@0.3 = 0.0003043151893854862
+List metric added to result: class_precision@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.3 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.3 = 15
+Metric added to result: mAP@0.5 = 6.690932448346002e-05
+Metric added to result: precision@0.5 = 0.00019043266301035954
+Metric added to result: recall@0.5 = 0.0007570404764308065
+Metric added to result: f1@0.5 = 0.0003043151893854862
+List metric added to result: class_precision@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.5 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.5 = 15
+Metric added to result: mAP@0.7 = 0.0
+Metric added to result: precision@0.7 = 0.0
+Metric added to result: recall@0.7 = 0.0
+Metric added to result: f1@0.7 = 0.0
+List metric added to result: class_precision@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.7 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.7 = 0
+Metric added to result: mAP_coco = 3.345466224173001e-05
+
+Detection metrics:
+  Precision: 0.0002
+  Recall: 0.0008
+  F1 Score: 0.0003
+  Accuracy: 0.0002
+  mAP: 0.0001
+
+Status of metrics added to result dictionary:
+  precision: 0.0002 - Successfully added
+  recall: 0.0008 - Successfully added
+  f1: 0.0003 - Successfully added
+  accuracy: 0.0002 - Successfully added
+  mAP: 0.0001 - Successfully added
+
+Class-wise metrics:
+  Human     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Car       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Truck     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Van       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Motorbike : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bicycle   : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bus       : Precision=0.0005, Recall=0.1562, F1=0.0011
+  Trailer   : Precision=0.0000, Recall=0.0000, F1=0.0000
+
+Confusion Matrix:
+[[ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  6  8  0 16  0]
+ [ 0  0  0  0  2  0  1  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0 15  0]
+ [ 0  0  0  0  0  0  0  0]]
+
+Wandb is available for logging metrics
+
+Sending the following validation metrics to Wandb:
+  step: 3594
+  val/accuracy: 0.00019043266301035954
+  val/precision: 0.00019043266301035954
+  val/recall: 0.0007570404764308065
+  val/f1: 0.0003043151893854862
+  val/mAP: 6.690932448346002e-05
+  val/mAP@0.1: 0.00021410983834707205
+  val/precision@0.1: 0.0006093845216331506
+  val/recall@0.1: 0.0024225295245785807
+  val/f1@0.1: 0.000973808606033556
+  val/mAP@0.3: 6.690932448346002e-05
+  val/precision@0.3: 0.00019043266301035954
+  val/recall@0.3: 0.0007570404764308065
+  val/f1@0.3: 0.0003043151893854862
+  val/mAP@0.5: 6.690932448346002e-05
+  val/precision@0.5: 0.00019043266301035954
+  val/recall@0.5: 0.0007570404764308065
+  val/f1@0.5: 0.0003043151893854862
+  val/mAP@0.7: 0.0
+  val/precision@0.7: 0.0
+  val/recall@0.7: 0.0
+  val/f1@0.7: 0.0
+  val/mAP_coco: 3.345466224173001e-05
+  val/avg_iou: 0.008671076150504633
+  val/avg_confidence: 0.0014084740484176118
+  val/total_matches: 48
+  val/loss: 10.92579600325144
+  val/loss_ce: 0.06503168316316102
+  val/loss_bbox: 0.902197432353512
+  val/loss_giou: 8.574886990832043
+  val/loss_cardinality: 1.3836798969027284
+  val/class/Human/precision: 0.0
+  val/class/Human/recall: 0.0
+  val/class/Human/f1: 0.0
+  val/class/Car/precision: 0.0
+  val/class/Car/recall: 0.0
+  val/class/Car/f1: 0.0
+  val/class/Truck/precision: 0.0
+  val/class/Truck/recall: 0.0
+  val/class/Truck/f1: 0.0
+  val/class/Van/precision: 0.0
+  val/class/Van/recall: 0.0
+  val/class/Van/f1: 0.0
+  val/class/Motorbike/precision: 0.0
+  val/class/Motorbike/recall: 0.0
+  val/class/Motorbike/f1: 0.0
+  val/class/Bicycle/precision: 0.0
+  val/class/Bicycle/recall: 0.0
+  val/class/Bicycle/f1: 0.0
+  val/class/Bus/precision: 0.0005352745958676801
+  val/class/Bus/recall: 0.15625
+  val/class/Bus/f1: 0.001066894270777766
+  val/class/Trailer/precision: 0.0
+  val/class/Trailer/recall: 0.0
+  val/class/Trailer/f1: 0.0
+Successfully logged validation metrics to Wandb
+GPU memory after validation: 0.37GB allocated, 0.43GB reserved
+
+Validation completed. Returned metrics:
+  precision: 0.00019043266301035954
+  recall: 0.0007570404764308065
+  f1: 0.0003043151893854862
+  accuracy: 0.00019043266301035954
+  mAP: 6.690932448346002e-05
+Validation for epoch 2 completed successfully.
+Learning rate updated: 0.001000
+
+**************************************************
+EPOCH 2/20 SUMMARY:
+**************************************************
+  Time: 1608.32 seconds (14.29 samples/second)
+  Training Loss: 10.6104
+  Validation Loss: 10.9258 (previous best: 10.8289)
+  Learning Rate: 0.001000
+  Train Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Val Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Training Loss Change: 0.8039 (+7.04%)
+  Validation Loss Change: -0.0969 (-0.89%)
+Cleared CUDA cache after epoch completion
+
+--------------------------------------------------------------------------------
+
+Validation metrics available at epoch end:
+Val_stats keys: ['loss', 'loss_ce', 'loss_bbox', 'loss_giou', 'loss_cardinality', 'precision', 'recall', 'f1', 'accuracy', 'mAP', 'class_precision', 'class_recall', 'class_f1', 'mAP@0.1', 'precision@0.1', 'recall@0.1', 'f1@0.1', 'class_precision@0.1', 'class_recall@0.1', 'class_f1@0.1', 'matches@0.1', 'mAP@0.3', 'precision@0.3', 'recall@0.3', 'f1@0.3', 'class_precision@0.3', 'class_recall@0.3', 'class_f1@0.3', 'matches@0.3', 'mAP@0.5', 'precision@0.5', 'recall@0.5', 'f1@0.5', 'class_precision@0.5', 'class_recall@0.5', 'class_f1@0.5', 'matches@0.5', 'mAP@0.7', 'precision@0.7', 'recall@0.7', 'f1@0.7', 'class_precision@0.7', 'class_recall@0.7', 'class_f1@0.7', 'matches@0.7', 'mAP_coco', 'detection_metrics']
+  precision: 0.00019043266301035954
+  recall: 0.0007570404764308065
+  f1: 0.0003043151893854862
+  accuracy: 0.00019043266301035954
+  mAP: 6.690932448346002e-05
+  class_precision: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0005352745958676801, 0.0]
+  class_recall: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15625, 0.0]
+  class_f1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001066894270777766, 0.0]
+  mAP@0.1: 0.00021410983834707205
+  precision@0.1: 0.0006093845216331506
+  recall@0.1: 0.0024225295245785807
+  f1@0.1: 0.000973808606033556
+  class_precision@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0017128787067765764, 0.0]
+  class_recall@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0]
+  class_f1@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.003414061666488851, 0.0]
+  matches@0.1: 48
+  mAP@0.3: 6.690932448346002e-05
+  precision@0.3: 0.00019043266301035954
+  recall@0.3: 0.0007570404764308065
+  f1@0.3: 0.0003043151893854862
+  class_precision@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0005352745958676801, 0.0]
+  class_recall@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15625, 0.0]
+  class_f1@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001066894270777766, 0.0]
+  matches@0.3: 15
+  mAP@0.5: 6.690932448346002e-05
+  precision@0.5: 0.00019043266301035954
+  recall@0.5: 0.0007570404764308065
+  f1@0.5: 0.0003043151893854862
+  class_precision@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0005352745958676801, 0.0]
+  class_recall@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15625, 0.0]
+  class_f1@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001066894270777766, 0.0]
+  matches@0.5: 15
+  mAP@0.7: 0.0
+  precision@0.7: 0.0
+  recall@0.7: 0.0
+  f1@0.7: 0.0
+  class_precision@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.7: 0
+  mAP_coco: 3.345466224173001e-05
+
+Important Validation Metrics:
+  Precision: 0.0002
+  Recall: 0.0008
+  F1 Score: 0.0003
+  Accuracy: 0.0002
+  mAP: 0.0001
+
+==================================================
+EPOCH 3/20
+==================================================
+Starting training for epoch 3...
+Initial GPU memory: 0.32 GB allocated, 0.41 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 3:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+Batch 1/1436, Loss: 10.1212
+Epoch 3: 100%|███| 1436/1436 [25:11<00:00,  1.05s/it]
+Batch 51/1436, Loss: 10.3238
+Batch 101/1436, Loss: 11.3045
+Batch 151/1436, Loss: 11.3643
+Batch 201/1436, Loss: 9.5492
+Batch 251/1436, Loss: 10.5472
+Batch 301/1436, Loss: 10.4016
+Batch 351/1436, Loss: 12.0695
+Batch 401/1436, Loss: 9.1507
+Batch 451/1436, Loss: 10.4440
+Batch 501/1436, Loss: 10.6161
+Batch 551/1436, Loss: 10.5176
+Batch 601/1436, Loss: 11.2671
+Batch 651/1436, Loss: 10.9499
+Batch 701/1436, Loss: 7.9702
+Batch 751/1436, Loss: 8.2642
+Batch 801/1436, Loss: 10.0706
+Batch 851/1436, Loss: 10.5434
+Batch 901/1436, Loss: 7.3874
+Batch 951/1436, Loss: 10.2580
+Batch 1001/1436, Loss: 9.9805
+Batch 1051/1436, Loss: 11.1746
+Batch 1101/1436, Loss: 11.0195
+Batch 1151/1436, Loss: 11.4710
+Batch 1201/1436, Loss: 10.0028
+Batch 1251/1436, Loss: 10.6435
+Batch 1301/1436, Loss: 10.6194
+Batch 1351/1436, Loss: 10.7485
+Batch 1401/1436, Loss: 9.6232
+Training for epoch 3 completed successfully.
+Cleared CUDA cache between training and validation
+Forced garbage collection to free CPU memory
+Starting validation for epoch 3...
+BFloat16 precision supported on NVIDIA A100-SXM4-40GB (SM 8.0)
+Using torch.bfloat16 for mixed precision training
+Validation: 100%|██| 308/308 [01:03<00:00,  4.85it/s]
+Validation sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Validation target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running validation model forward pass
+Validation model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Val batch 1/308, Loss: 13.1670
+Stored outputs for batch 1, total outputs: 1
+Stored targets for batch 1, total targets: 16
+Val batch 51/308, Loss: 12.1199
+Stored outputs for batch 51, total outputs: 51
+Stored targets for batch 51, total targets: 816
+Val batch 101/308, Loss: 10.3843
+Stored outputs for batch 101, total outputs: 101
+Stored targets for batch 101, total targets: 1616
+Val batch 151/308, Loss: 11.8494
+Stored outputs for batch 151, total outputs: 151
+Stored targets for batch 151, total targets: 2416
+Val batch 201/308, Loss: 10.7324
+Stored outputs for batch 201, total outputs: 201
+Stored targets for batch 201, total targets: 3216
+Val batch 251/308, Loss: 11.5370
+Stored outputs for batch 251, total outputs: 251
+Stored targets for batch 251, total targets: 4016
+Val batch 301/308, Loss: 11.7314
+Stored outputs for batch 301, total outputs: 301
+Stored targets for batch 301, total targets: 4816
+Validation stats: {'loss': 11.082408265012324, 'loss_ce': 0.06700432758971855, 'loss_bbox': 0.8531402240132356, 'loss_giou': 8.778583816506647, 'loss_cardinality': 1.3836798969027284}
+
+Number of collected outputs: 308
+Number of validation targets: 4923
+Using most common tensor sizes: logits=16, boxes=16
+Size distribution: logits={16: 307, 11: 1}, boxes={16: 307, 11: 1}
+Batch 307 has different tensor sizes: logits=torch.Size([100, 11, 9]), boxes=torch.Size([100, 11, 4])
+Expected sizes: logits=(*,16,*), boxes=(*,16,*)
+This is typically caused by the last batch having a different size.
+Padding tensors to ensure consistent sizes before concatenation...
+  Padded batch 307 logits from shape torch.Size([100, 11, 9]) to torch.Size([100, 16, 9])
+  Padded batch 307 boxes from shape torch.Size([100, 11, 4]) to torch.Size([100, 16, 4])
+Successfully concatenated all outputs: pred_logits shape=torch.Size([30800, 16, 9]), pred_boxes shape=torch.Size([30800, 16, 4])
+
+Computing detection metrics...
+Number of validation samples: 4923
+Number of predictions: 30800
+Overall confidence score statistics:
+  Max: 1.0000
+  Min: 0.0000
+  Mean: 0.1118
+  Median: 0.0000
+Computing detection metrics with 4923 targets and 30800 predictions...
+
+Validation Debug Info:
+  Number of predictions: 16
+  Max confidence score: 0.0055
+  Min confidence score: 0.0021
+  Mean confidence score: 0.0038
+  Number of ground truth boxes: 3
+
+Detailed Validation Debug Info:
+  Total predictions: 78768
+  Total ground truth boxes: 19814
+  Total matches: 44
+  Confidence scores: max=0.0089, min=0.0000, avg=0.0008
+  IoU values: max=0.6573, min=0.0000, avg=0.0072
+
+Metrics at different IoU thresholds:
+  IoU=0.1:
+    Precision: 0.0006
+    Recall: 0.0022
+    F1 Score: 0.0009
+    mAP: 0.0005
+    Matches: 44
+  IoU=0.3:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+  IoU=0.5:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+  IoU=0.7:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+
+COCO-style mAP (IoU=0.5:0.95): 0.0000
+
+Standard Metrics (IoU=0.5 or first threshold):
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  mAP: 0.0000
+  Accuracy: 0.0000
+Detection metrics computed successfully
+Metric added to result: precision = 0.0
+Metric added to result: recall = 0.0
+Metric added to result: f1 = 0.0
+Metric added to result: accuracy = 0.0
+Metric added to result: mAP = 0.0
+List metric added to result: class_precision = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1 = [0.0, 0.0, 0.0]...
+Metric added to result: mAP@0.1 = 0.00048410331061876676
+Metric added to result: precision@0.1 = 0.0005586024781637213
+Metric added to result: recall@0.1 = 0.0022206520641970323
+Metric added to result: f1@0.1 = 0.0008926578888640929
+List metric added to result: class_precision@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.1 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.1 = 44
+Metric added to result: mAP@0.3 = 0.0
+Metric added to result: precision@0.3 = 0.0
+Metric added to result: recall@0.3 = 0.0
+Metric added to result: f1@0.3 = 0.0
+List metric added to result: class_precision@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.3 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.3 = 0
+Metric added to result: mAP@0.5 = 0.0
+Metric added to result: precision@0.5 = 0.0
+Metric added to result: recall@0.5 = 0.0
+Metric added to result: f1@0.5 = 0.0
+List metric added to result: class_precision@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.5 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.5 = 0
+Metric added to result: mAP@0.7 = 0.0
+Metric added to result: precision@0.7 = 0.0
+Metric added to result: recall@0.7 = 0.0
+Metric added to result: f1@0.7 = 0.0
+List metric added to result: class_precision@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.7 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.7 = 0
+Metric added to result: mAP_coco = 0.0
+
+Detection metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+Status of metrics added to result dictionary:
+  precision: 0.0000 - Successfully added
+  recall: 0.0000 - Successfully added
+  f1: 0.0000 - Successfully added
+  accuracy: 0.0000 - Successfully added
+  mAP: 0.0000 - Successfully added
+
+Class-wise metrics:
+  Human     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Car       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Truck     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Van       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Motorbike : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bicycle   : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bus       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Trailer   : Precision=0.0000, Recall=0.0000, F1=0.0000
+
+Confusion Matrix:
+[[ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  1  2  3  2]
+ [ 0  0  0  0  0  0 13  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]]
+
+Wandb is available for logging metrics
+
+Sending the following validation metrics to Wandb:
+  step: 5392
+  val/accuracy: 0.0
+  val/precision: 0.0
+  val/recall: 0.0
+  val/f1: 0.0
+  val/mAP: 0.0
+  val/mAP@0.1: 0.00048410331061876676
+  val/precision@0.1: 0.0005586024781637213
+  val/recall@0.1: 0.0022206520641970323
+  val/f1@0.1: 0.0008926578888640929
+  val/mAP@0.3: 0.0
+  val/precision@0.3: 0.0
+  val/recall@0.3: 0.0
+  val/f1@0.3: 0.0
+  val/mAP@0.5: 0.0
+  val/precision@0.5: 0.0
+  val/recall@0.5: 0.0
+  val/f1@0.5: 0.0
+  val/mAP@0.7: 0.0
+  val/precision@0.7: 0.0
+  val/recall@0.7: 0.0
+  val/f1@0.7: 0.0
+  val/mAP_coco: 0.0
+  val/avg_iou: 0.007248139713801962
+  val/avg_confidence: 0.0007714326220080059
+  val/total_matches: 44
+  val/loss: 11.082408265012324
+  val/loss_ce: 0.06700432758971855
+  val/loss_bbox: 0.8531402240132356
+  val/loss_giou: 8.778583816506647
+  val/loss_cardinality: 1.3836798969027284
+  val/class/Human/precision: 0.0
+  val/class/Human/recall: 0.0
+  val/class/Human/f1: 0.0
+  val/class/Car/precision: 0.0
+  val/class/Car/recall: 0.0
+  val/class/Car/f1: 0.0
+  val/class/Truck/precision: 0.0
+  val/class/Truck/recall: 0.0
+  val/class/Truck/f1: 0.0
+  val/class/Van/precision: 0.0
+  val/class/Van/recall: 0.0
+  val/class/Van/f1: 0.0
+  val/class/Motorbike/precision: 0.0
+  val/class/Motorbike/recall: 0.0
+  val/class/Motorbike/f1: 0.0
+  val/class/Bicycle/precision: 0.0
+  val/class/Bicycle/recall: 0.0
+  val/class/Bicycle/f1: 0.0
+  val/class/Bus/precision: 0.0
+  val/class/Bus/recall: 0.0
+  val/class/Bus/f1: 0.0
+  val/class/Trailer/precision: 0.0
+  val/class/Trailer/recall: 0.0
+  val/class/Trailer/f1: 0.0
+Successfully logged validation metrics to Wandb
+GPU memory after validation: 0.37GB allocated, 0.43GB reserved
+
+Validation completed. Returned metrics:
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+Validation for epoch 3 completed successfully.
+Learning rate updated: 0.001000
+
+**************************************************
+EPOCH 3/20 SUMMARY:
+**************************************************
+  Time: 1598.45 seconds (14.37 samples/second)
+  Training Loss: 10.5685
+  Validation Loss: 11.0824 (previous best: 10.8289)
+  Learning Rate: 0.001000
+  Train Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Val Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Training Loss Change: 0.0419 (+0.39%)
+  Validation Loss Change: -0.1566 (-1.43%)
+Cleared CUDA cache after epoch completion
+
+--------------------------------------------------------------------------------
+
+Validation metrics available at epoch end:
+Val_stats keys: ['loss', 'loss_ce', 'loss_bbox', 'loss_giou', 'loss_cardinality', 'precision', 'recall', 'f1', 'accuracy', 'mAP', 'class_precision', 'class_recall', 'class_f1', 'mAP@0.1', 'precision@0.1', 'recall@0.1', 'f1@0.1', 'class_precision@0.1', 'class_recall@0.1', 'class_f1@0.1', 'matches@0.1', 'mAP@0.3', 'precision@0.3', 'recall@0.3', 'f1@0.3', 'class_precision@0.3', 'class_recall@0.3', 'class_f1@0.3', 'matches@0.3', 'mAP@0.5', 'precision@0.5', 'recall@0.5', 'f1@0.5', 'class_precision@0.5', 'class_recall@0.5', 'class_f1@0.5', 'matches@0.5', 'mAP@0.7', 'precision@0.7', 'recall@0.7', 'f1@0.7', 'class_precision@0.7', 'class_recall@0.7', 'class_f1@0.7', 'matches@0.7', 'mAP_coco', 'detection_metrics']
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+  class_precision: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  mAP@0.1: 0.00048410331061876676
+  precision@0.1: 0.0005586024781637213
+  recall@0.1: 0.0022206520641970323
+  f1@0.1: 0.0008926578888640929
+  class_precision@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.00033200531208499334, 0.0006206394726704619, 0.0029201817001946787]
+  class_recall@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.03468208092485549, 0.3020833333333333, 0.024324324324324326]
+  class_f1@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0006577144423129624, 0.0012387339284951522, 0.005214368482039398]
+  matches@0.1: 44
+  mAP@0.3: 0.0
+  precision@0.3: 0.0
+  recall@0.3: 0.0
+  f1@0.3: 0.0
+  class_precision@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.3: 0
+  mAP@0.5: 0.0
+  precision@0.5: 0.0
+  recall@0.5: 0.0
+  f1@0.5: 0.0
+  class_precision@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.5: 0
+  mAP@0.7: 0.0
+  precision@0.7: 0.0
+  recall@0.7: 0.0
+  f1@0.7: 0.0
+  class_precision@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.7: 0
+  mAP_coco: 0.0
+
+Important Validation Metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+==================================================
+EPOCH 4/20
+==================================================
+Starting training for epoch 4...
+Initial GPU memory: 0.32 GB allocated, 0.41 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 4:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+Batch 1/1436, Loss: 11.5547
+Epoch 4: 100%|███| 1436/1436 [25:05<00:00,  1.05s/it]
+Batch 51/1436, Loss: 11.3392
+Batch 101/1436, Loss: 10.1924
+Batch 151/1436, Loss: 10.8488
+Batch 201/1436, Loss: 10.7011
+Batch 251/1436, Loss: 11.3518
+Batch 301/1436, Loss: 9.8475
+Batch 351/1436, Loss: 10.7656
+Batch 401/1436, Loss: 10.7199
+Batch 451/1436, Loss: 10.6644
+Batch 501/1436, Loss: 9.2809
+Batch 551/1436, Loss: 10.5621
+Batch 601/1436, Loss: 9.8706
+Batch 651/1436, Loss: 10.7672
+Batch 701/1436, Loss: 10.6048
+Batch 751/1436, Loss: 11.0719
+Batch 801/1436, Loss: 10.7571
+Batch 851/1436, Loss: 10.8463
+Batch 901/1436, Loss: 11.0418
+Batch 951/1436, Loss: 10.9185
+Batch 1001/1436, Loss: 11.7535
+Batch 1051/1436, Loss: 10.1894
+Batch 1101/1436, Loss: 10.8052
+Batch 1151/1436, Loss: 9.0269
+Batch 1201/1436, Loss: 12.9680
+Batch 1251/1436, Loss: 10.4194
+Batch 1301/1436, Loss: 10.9804
+Batch 1351/1436, Loss: 10.3595
+Batch 1401/1436, Loss: 9.7553
+Training for epoch 4 completed successfully.
+Cleared CUDA cache between training and validation
+Forced garbage collection to free CPU memory
+Starting validation for epoch 4...
+BFloat16 precision supported on NVIDIA A100-SXM4-40GB (SM 8.0)
+Using torch.bfloat16 for mixed precision training
+Validation: 100%|██| 308/308 [01:04<00:00,  4.81it/s]
+Validation sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Validation target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running validation model forward pass
+Validation model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Val batch 1/308, Loss: 12.4389
+Stored outputs for batch 1, total outputs: 1
+Stored targets for batch 1, total targets: 16
+Val batch 51/308, Loss: 11.0248
+Stored outputs for batch 51, total outputs: 51
+Stored targets for batch 51, total targets: 816
+Val batch 101/308, Loss: 10.4523
+Stored outputs for batch 101, total outputs: 101
+Stored targets for batch 101, total targets: 1616
+Val batch 151/308, Loss: 11.5124
+Stored outputs for batch 151, total outputs: 151
+Stored targets for batch 151, total targets: 2416
+Val batch 201/308, Loss: 11.6378
+Stored outputs for batch 201, total outputs: 201
+Stored targets for batch 201, total targets: 3216
+Val batch 251/308, Loss: 11.3731
+Stored outputs for batch 251, total outputs: 251
+Stored targets for batch 251, total targets: 4016
+Val batch 301/308, Loss: 12.0313
+Stored outputs for batch 301, total outputs: 301
+Stored targets for batch 301, total targets: 4816
+Validation stats: {'loss': 10.930995028372697, 'loss_ce': 0.06564232146642594, 'loss_bbox': 0.7789621145355624, 'loss_giou': 8.702710695467987, 'loss_cardinality': 1.3836798969027284}
+
+Number of collected outputs: 308
+Number of validation targets: 4923
+Using most common tensor sizes: logits=16, boxes=16
+Size distribution: logits={16: 307, 11: 1}, boxes={16: 307, 11: 1}
+Batch 307 has different tensor sizes: logits=torch.Size([100, 11, 9]), boxes=torch.Size([100, 11, 4])
+Expected sizes: logits=(*,16,*), boxes=(*,16,*)
+This is typically caused by the last batch having a different size.
+Padding tensors to ensure consistent sizes before concatenation...
+  Padded batch 307 logits from shape torch.Size([100, 11, 9]) to torch.Size([100, 16, 9])
+  Padded batch 307 boxes from shape torch.Size([100, 11, 4]) to torch.Size([100, 16, 4])
+Successfully concatenated all outputs: pred_logits shape=torch.Size([30800, 16, 9]), pred_boxes shape=torch.Size([30800, 16, 4])
+
+Computing detection metrics...
+Number of validation samples: 4923
+Number of predictions: 30800
+Overall confidence score statistics:
+  Max: 1.0000
+  Min: 0.0000
+  Mean: 0.1123
+  Median: 0.0000
+Computing detection metrics with 4923 targets and 30800 predictions...
+
+Validation Debug Info:
+  Number of predictions: 16
+  Max confidence score: 0.0096
+  Min confidence score: 0.0027
+  Mean confidence score: 0.0059
+  Number of ground truth boxes: 3
+
+Detailed Validation Debug Info:
+  Total predictions: 78768
+  Total ground truth boxes: 19814
+  Total matches: 6
+  Confidence scores: max=0.0126, min=0.0000, avg=0.0013
+  IoU values: max=0.6510, min=0.0000, avg=0.0102
+
+Metrics at different IoU thresholds:
+  IoU=0.1:
+    Precision: 0.0001
+    Recall: 0.0003
+    F1 Score: 0.0001
+    mAP: 0.0003
+    Matches: 6
+  IoU=0.3:
+    Precision: 0.0000
+    Recall: 0.0001
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 1
+  IoU=0.5:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+  IoU=0.7:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+
+COCO-style mAP (IoU=0.5:0.95): 0.0000
+
+Standard Metrics (IoU=0.5 or first threshold):
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  mAP: 0.0000
+  Accuracy: 0.0000
+Detection metrics computed successfully
+Metric added to result: precision = 0.0
+Metric added to result: recall = 0.0
+Metric added to result: f1 = 0.0
+Metric added to result: accuracy = 0.0
+Metric added to result: mAP = 0.0
+List metric added to result: class_precision = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1 = [0.0, 0.0, 0.0]...
+Metric added to result: mAP@0.1 = 0.00033491182911200336
+Metric added to result: precision@0.1 = 7.617306520414382e-05
+Metric added to result: recall@0.1 = 0.0003028161905723226
+Metric added to result: f1@0.1 = 0.0001217260757541945
+List metric added to result: class_precision@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.1 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.1 = 6
+Metric added to result: mAP@0.3 = 3.5014005602240894e-05
+Metric added to result: precision@0.3 = 1.2695510867357303e-05
+Metric added to result: recall@0.3 = 5.04693650953871e-05
+Metric added to result: f1@0.3 = 2.0287679292365742e-05
+List metric added to result: class_precision@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.3 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.3 = 1
+Metric added to result: mAP@0.5 = 0.0
+Metric added to result: precision@0.5 = 0.0
+Metric added to result: recall@0.5 = 0.0
+Metric added to result: f1@0.5 = 0.0
+List metric added to result: class_precision@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.5 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.5 = 0
+Metric added to result: mAP@0.7 = 0.0
+Metric added to result: precision@0.7 = 0.0
+Metric added to result: recall@0.7 = 0.0
+Metric added to result: f1@0.7 = 0.0
+List metric added to result: class_precision@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.7 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.7 = 0
+Metric added to result: mAP_coco = 0.0
+
+Detection metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+Status of metrics added to result dictionary:
+  precision: 0.0000 - Successfully added
+  recall: 0.0000 - Successfully added
+  f1: 0.0000 - Successfully added
+  accuracy: 0.0000 - Successfully added
+  mAP: 0.0000 - Successfully added
+
+Class-wise metrics:
+  Human     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Car       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Truck     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Van       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Motorbike : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bicycle   : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bus       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Trailer   : Precision=0.0000, Recall=0.0000, F1=0.0000
+
+Confusion Matrix:
+[[ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0 27  0  1  2]
+ [ 0  0  0  0  6  0  1  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  6  0  0  0]
+ [ 0  0  0  0  6  2  0  0]]
+
+Wandb is available for logging metrics
+
+Sending the following validation metrics to Wandb:
+  step: 7190
+  val/accuracy: 0.0
+  val/precision: 0.0
+  val/recall: 0.0
+  val/f1: 0.0
+  val/mAP: 0.0
+  val/mAP@0.1: 0.00033491182911200336
+  val/precision@0.1: 7.617306520414382e-05
+  val/recall@0.1: 0.0003028161905723226
+  val/f1@0.1: 0.0001217260757541945
+  val/mAP@0.3: 3.5014005602240894e-05
+  val/precision@0.3: 1.2695510867357303e-05
+  val/recall@0.3: 5.04693650953871e-05
+  val/f1@0.3: 2.0287679292365742e-05
+  val/mAP@0.5: 0.0
+  val/precision@0.5: 0.0
+  val/recall@0.5: 0.0
+  val/f1@0.5: 0.0
+  val/mAP@0.7: 0.0
+  val/precision@0.7: 0.0
+  val/recall@0.7: 0.0
+  val/f1@0.7: 0.0
+  val/mAP_coco: 0.0
+  val/avg_iou: 0.010194493850542498
+  val/avg_confidence: 0.001326721942908464
+  val/total_matches: 6
+  val/loss: 10.930995028372697
+  val/loss_ce: 0.06564232146642594
+  val/loss_bbox: 0.7789621145355624
+  val/loss_giou: 8.702710695467987
+  val/loss_cardinality: 1.3836798969027284
+  val/class/Human/precision: 0.0
+  val/class/Human/recall: 0.0
+  val/class/Human/f1: 0.0
+  val/class/Car/precision: 0.0
+  val/class/Car/recall: 0.0
+  val/class/Car/f1: 0.0
+  val/class/Truck/precision: 0.0
+  val/class/Truck/recall: 0.0
+  val/class/Truck/f1: 0.0
+  val/class/Van/precision: 0.0
+  val/class/Van/recall: 0.0
+  val/class/Van/f1: 0.0
+  val/class/Motorbike/precision: 0.0
+  val/class/Motorbike/recall: 0.0
+  val/class/Motorbike/f1: 0.0
+  val/class/Bicycle/precision: 0.0
+  val/class/Bicycle/recall: 0.0
+  val/class/Bicycle/f1: 0.0
+  val/class/Bus/precision: 0.0
+  val/class/Bus/recall: 0.0
+  val/class/Bus/f1: 0.0
+  val/class/Trailer/precision: 0.0
+  val/class/Trailer/recall: 0.0
+  val/class/Trailer/f1: 0.0
+Successfully logged validation metrics to Wandb
+GPU memory after validation: 0.37GB allocated, 0.43GB reserved
+
+Validation completed. Returned metrics:
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+Validation for epoch 4 completed successfully.
+Learning rate updated: 0.001000
+
+**************************************************
+EPOCH 4/20 SUMMARY:
+**************************************************
+  Time: 1594.15 seconds (14.41 samples/second)
+  Training Loss: 10.6039
+  Validation Loss: 10.9310 (previous best: 10.8289)
+  Learning Rate: 0.001000
+  Train Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Val Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Training Loss Change: -0.0354 (-0.33%)
+  Validation Loss Change: 0.1514 (+1.37%)
+Cleared CUDA cache after epoch completion
+
+--------------------------------------------------------------------------------
+
+Validation metrics available at epoch end:
+Val_stats keys: ['loss', 'loss_ce', 'loss_bbox', 'loss_giou', 'loss_cardinality', 'precision', 'recall', 'f1', 'accuracy', 'mAP', 'class_precision', 'class_recall', 'class_f1', 'mAP@0.1', 'precision@0.1', 'recall@0.1', 'f1@0.1', 'class_precision@0.1', 'class_recall@0.1', 'class_f1@0.1', 'matches@0.1', 'mAP@0.3', 'precision@0.3', 'recall@0.3', 'f1@0.3', 'class_precision@0.3', 'class_recall@0.3', 'class_f1@0.3', 'matches@0.3', 'mAP@0.5', 'precision@0.5', 'recall@0.5', 'f1@0.5', 'class_precision@0.5', 'class_recall@0.5', 'class_f1@0.5', 'matches@0.5', 'mAP@0.7', 'precision@0.7', 'recall@0.7', 'f1@0.7', 'class_precision@0.7', 'class_recall@0.7', 'class_f1@0.7', 'matches@0.7', 'mAP_coco', 'detection_metrics']
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+  class_precision: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  mAP@0.1: 0.00033491182911200336
+  precision@0.1: 7.617306520414382e-05
+  recall@0.1: 0.0003028161905723226
+  f1@0.1: 0.0001217260757541945
+  class_precision@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001558846453624318, 0.0011204481792717086]
+  class_recall@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.020833333333333332, 0.010810810810810811]
+  class_f1@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00290065264684554, 0.0020304568527918783]
+  matches@0.1: 6
+  mAP@0.3: 3.5014005602240894e-05
+  precision@0.3: 1.2695510867357303e-05
+  recall@0.3: 5.04693650953871e-05
+  f1@0.3: 2.0287679292365742e-05
+  class_precision@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00028011204481792715]
+  class_recall@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.002702702702702703]
+  class_f1@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0005076142131979696]
+  matches@0.3: 1
+  mAP@0.5: 0.0
+  precision@0.5: 0.0
+  recall@0.5: 0.0
+  f1@0.5: 0.0
+  class_precision@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.5: 0
+  mAP@0.7: 0.0
+  precision@0.7: 0.0
+  recall@0.7: 0.0
+  f1@0.7: 0.0
+  class_precision@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.7: 0
+  mAP_coco: 0.0
+
+Important Validation Metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+==================================================
+EPOCH 5/20
+==================================================
+Starting training for epoch 5...
+Initial GPU memory: 0.32 GB allocated, 0.41 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 5:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+Batch 1/1436, Loss: 10.3018
+Epoch 5: 100%|███| 1436/1436 [25:21<00:00,  1.06s/it]
+Batch 51/1436, Loss: 10.4288
+Batch 101/1436, Loss: 10.2327
+Batch 151/1436, Loss: 8.6730
+Batch 201/1436, Loss: 10.4990
+Batch 251/1436, Loss: 10.6730
+Batch 301/1436, Loss: 11.2114
+Batch 351/1436, Loss: 11.3114
+Batch 401/1436, Loss: 11.9069
+Batch 451/1436, Loss: 10.3738
+Batch 501/1436, Loss: 10.5959
+Batch 551/1436, Loss: 10.2247
+Batch 601/1436, Loss: 10.2851
+Batch 651/1436, Loss: 10.2764
+Batch 701/1436, Loss: 11.0492
+Batch 751/1436, Loss: 12.0227
+Batch 801/1436, Loss: 10.9023
+Batch 851/1436, Loss: 11.4120
+Batch 901/1436, Loss: 10.9619
+Batch 951/1436, Loss: 10.5146
+Batch 1001/1436, Loss: 11.1717
+Batch 1051/1436, Loss: 10.9013
+Batch 1101/1436, Loss: 10.2751
+Batch 1151/1436, Loss: 11.5541
+Batch 1201/1436, Loss: 9.6472
+Batch 1251/1436, Loss: 9.5601
+Batch 1301/1436, Loss: 10.8788
+Batch 1351/1436, Loss: 10.2328
+Batch 1401/1436, Loss: 10.6324
+Training for epoch 5 completed successfully.
+Cleared CUDA cache between training and validation
+Forced garbage collection to free CPU memory
+Starting validation for epoch 5...
+BFloat16 precision supported on NVIDIA A100-SXM4-40GB (SM 8.0)
+Using torch.bfloat16 for mixed precision training
+Validation: 100%|██| 308/308 [01:04<00:00,  4.76it/s]
+Validation sample shape: torch.Size([16, 3, 216, 384]), Number of targets: 16
+Validation target keys: dict_keys(['boxes', 'labels', 'image_id', 'orig_size', 'size'])
+Running validation model forward pass
+Validation model output keys: dict_keys(['pred_logits', 'pred_boxes'])
+Val batch 1/308, Loss: 11.8496
+Stored outputs for batch 1, total outputs: 1
+Stored targets for batch 1, total targets: 16
+Val batch 51/308, Loss: 10.9605
+Stored outputs for batch 51, total outputs: 51
+Stored targets for batch 51, total targets: 816
+Val batch 101/308, Loss: 10.1512
+Stored outputs for batch 101, total outputs: 101
+Stored targets for batch 101, total targets: 1616
+Val batch 151/308, Loss: 11.6035
+Stored outputs for batch 151, total outputs: 151
+Stored targets for batch 151, total targets: 2416
+Val batch 201/308, Loss: 11.6482
+Stored outputs for batch 201, total outputs: 201
+Stored targets for batch 201, total targets: 3216
+Val batch 251/308, Loss: 11.4972
+Stored outputs for batch 251, total outputs: 251
+Stored targets for batch 251, total targets: 4016
+Val batch 301/308, Loss: 11.6800
+Stored outputs for batch 301, total outputs: 301
+Stored targets for batch 301, total targets: 4816
+Validation stats: {'loss': 10.826118033111404, 'loss_ce': 0.06942264823085785, 'loss_bbox': 0.8851471081279315, 'loss_giou': 8.487868379849893, 'loss_cardinality': 1.3836798969027284}
+
+Number of collected outputs: 308
+Number of validation targets: 4923
+Using most common tensor sizes: logits=16, boxes=16
+Size distribution: logits={16: 307, 11: 1}, boxes={16: 307, 11: 1}
+Batch 307 has different tensor sizes: logits=torch.Size([100, 11, 9]), boxes=torch.Size([100, 11, 4])
+Expected sizes: logits=(*,16,*), boxes=(*,16,*)
+This is typically caused by the last batch having a different size.
+Padding tensors to ensure consistent sizes before concatenation...
+  Padded batch 307 logits from shape torch.Size([100, 11, 9]) to torch.Size([100, 16, 9])
+  Padded batch 307 boxes from shape torch.Size([100, 11, 4]) to torch.Size([100, 16, 4])
+Successfully concatenated all outputs: pred_logits shape=torch.Size([30800, 16, 9]), pred_boxes shape=torch.Size([30800, 16, 4])
+
+Computing detection metrics...
+Number of validation samples: 4923
+Number of predictions: 30800
+Overall confidence score statistics:
+  Max: 1.0000
+  Min: 0.0000
+  Mean: 0.1123
+  Median: 0.0000
+Computing detection metrics with 4923 targets and 30800 predictions...
+
+Validation Debug Info:
+  Number of predictions: 16
+  Max confidence score: 0.0111
+  Min confidence score: 0.0001
+  Mean confidence score: 0.0041
+  Number of ground truth boxes: 3
+
+Detailed Validation Debug Info:
+  Total predictions: 78768
+  Total ground truth boxes: 19814
+  Total matches: 19
+  Confidence scores: max=0.0128, min=0.0000, avg=0.0007
+  IoU values: max=0.8742, min=0.0000, avg=0.0091
+
+Metrics at different IoU thresholds:
+  IoU=0.1:
+    Precision: 0.0002
+    Recall: 0.0010
+    F1 Score: 0.0004
+    mAP: 0.0002
+    Matches: 19
+  IoU=0.3:
+    Precision: 0.0001
+    Recall: 0.0002
+    F1 Score: 0.0001
+    mAP: 0.0000
+    Matches: 4
+  IoU=0.5:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+  IoU=0.7:
+    Precision: 0.0000
+    Recall: 0.0000
+    F1 Score: 0.0000
+    mAP: 0.0000
+    Matches: 0
+
+COCO-style mAP (IoU=0.5:0.95): 0.0000
+
+Standard Metrics (IoU=0.5 or first threshold):
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  mAP: 0.0000
+  Accuracy: 0.0000
+Detection metrics computed successfully
+Metric added to result: precision = 0.0
+Metric added to result: recall = 0.0
+Metric added to result: f1 = 0.0
+Metric added to result: accuracy = 0.0
+Metric added to result: mAP = 0.0
+List metric added to result: class_precision = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1 = [0.0, 0.0, 0.0]...
+Metric added to result: mAP@0.1 = 0.000236318407960199
+Metric added to result: precision@0.1 = 0.00024121470647978874
+Metric added to result: recall@0.1 = 0.0009589179368123549
+Metric added to result: f1@0.1 = 0.0003854659065549492
+List metric added to result: class_precision@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.1 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.1 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.1 = 19
+Metric added to result: mAP@0.3 = 4.9751243781094526e-05
+Metric added to result: precision@0.3 = 5.078204346942921e-05
+Metric added to result: recall@0.3 = 0.0002018774603815484
+Metric added to result: f1@0.3 = 8.115071716946297e-05
+List metric added to result: class_precision@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.3 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.3 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.3 = 4
+Metric added to result: mAP@0.5 = 0.0
+Metric added to result: precision@0.5 = 0.0
+Metric added to result: recall@0.5 = 0.0
+Metric added to result: f1@0.5 = 0.0
+List metric added to result: class_precision@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.5 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.5 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.5 = 0
+Metric added to result: mAP@0.7 = 0.0
+Metric added to result: precision@0.7 = 0.0
+Metric added to result: recall@0.7 = 0.0
+Metric added to result: f1@0.7 = 0.0
+List metric added to result: class_precision@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_recall@0.7 = [0.0, 0.0, 0.0]...
+List metric added to result: class_f1@0.7 = [0.0, 0.0, 0.0]...
+Metric added to result: matches@0.7 = 0
+Metric added to result: mAP_coco = 0.0
+
+Detection metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+Status of metrics added to result dictionary:
+  precision: 0.0000 - Successfully added
+  recall: 0.0000 - Successfully added
+  f1: 0.0000 - Successfully added
+  accuracy: 0.0000 - Successfully added
+  mAP: 0.0000 - Successfully added
+
+Class-wise metrics:
+  Human     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Car       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Truck     : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Van       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Motorbike : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bicycle   : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Bus       : Precision=0.0000, Recall=0.0000, F1=0.0000
+  Trailer   : Precision=0.0000, Recall=0.0000, F1=0.0000
+
+Confusion Matrix:
+[[ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0 38  0  6  0]
+ [ 0  0  0  0  4  0  3  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  0  0  0  0]
+ [ 0  0  0  0  4  0  0  0]]
+
+Wandb is available for logging metrics
+
+Sending the following validation metrics to Wandb:
+  step: 8988
+  val/accuracy: 0.0
+  val/precision: 0.0
+  val/recall: 0.0
+  val/f1: 0.0
+  val/mAP: 0.0
+  val/mAP@0.1: 0.000236318407960199
+  val/precision@0.1: 0.00024121470647978874
+  val/recall@0.1: 0.0009589179368123549
+  val/f1@0.1: 0.0003854659065549492
+  val/mAP@0.3: 4.9751243781094526e-05
+  val/precision@0.3: 5.078204346942921e-05
+  val/recall@0.3: 0.0002018774603815484
+  val/f1@0.3: 8.115071716946297e-05
+  val/mAP@0.5: 0.0
+  val/precision@0.5: 0.0
+  val/recall@0.5: 0.0
+  val/f1@0.5: 0.0
+  val/mAP@0.7: 0.0
+  val/precision@0.7: 0.0
+  val/recall@0.7: 0.0
+  val/f1@0.7: 0.0
+  val/mAP_coco: 0.0
+  val/avg_iou: 0.009107283250470007
+  val/avg_confidence: 0.0006770330761025258
+  val/total_matches: 19
+  val/loss: 10.826118033111404
+  val/loss_ce: 0.06942264823085785
+  val/loss_bbox: 0.8851471081279315
+  val/loss_giou: 8.487868379849893
+  val/loss_cardinality: 1.3836798969027284
+  val/class/Human/precision: 0.0
+  val/class/Human/recall: 0.0
+  val/class/Human/f1: 0.0
+  val/class/Car/precision: 0.0
+  val/class/Car/recall: 0.0
+  val/class/Car/f1: 0.0
+  val/class/Truck/precision: 0.0
+  val/class/Truck/recall: 0.0
+  val/class/Truck/f1: 0.0
+  val/class/Van/precision: 0.0
+  val/class/Van/recall: 0.0
+  val/class/Van/f1: 0.0
+  val/class/Motorbike/precision: 0.0
+  val/class/Motorbike/recall: 0.0
+  val/class/Motorbike/f1: 0.0
+  val/class/Bicycle/precision: 0.0
+  val/class/Bicycle/recall: 0.0
+  val/class/Bicycle/f1: 0.0
+  val/class/Bus/precision: 0.0
+  val/class/Bus/recall: 0.0
+  val/class/Bus/f1: 0.0
+  val/class/Trailer/precision: 0.0
+  val/class/Trailer/recall: 0.0
+  val/class/Trailer/f1: 0.0
+Successfully logged validation metrics to Wandb
+GPU memory after validation: 0.37GB allocated, 0.43GB reserved
+
+Validation completed. Returned metrics:
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+Validation for epoch 5 completed successfully.
+Learning rate updated: 0.001000
+
+✅ Saved new best model with validation loss: 10.8261
+
+**************************************************
+EPOCH 5/20 SUMMARY:
+**************************************************
+  Time: 1620.30 seconds (14.18 samples/second)
+  Training Loss: 10.5739
+  Validation Loss: 10.8261 (previous best: 10.8261)
+  Learning Rate: 0.001000
+  Train Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Val Cache Stats: Size=500/1000 | Hit Rate=0.00% | Hits=0 | Misses=0
+  Training Loss Change: 0.0300 (+0.28%)
+  Validation Loss Change: 0.1049 (+0.96%)
+Cleared CUDA cache after epoch completion
+GPU Memory: Current=0.32GB, Peak=0.37GB, Reserved=0.41GB
+
+--------------------------------------------------------------------------------
+
+Validation metrics available at epoch end:
+Val_stats keys: ['loss', 'loss_ce', 'loss_bbox', 'loss_giou', 'loss_cardinality', 'precision', 'recall', 'f1', 'accuracy', 'mAP', 'class_precision', 'class_recall', 'class_f1', 'mAP@0.1', 'precision@0.1', 'recall@0.1', 'f1@0.1', 'class_precision@0.1', 'class_recall@0.1', 'class_f1@0.1', 'matches@0.1', 'mAP@0.3', 'precision@0.3', 'recall@0.3', 'f1@0.3', 'class_precision@0.3', 'class_recall@0.3', 'class_f1@0.3', 'matches@0.3', 'mAP@0.5', 'precision@0.5', 'recall@0.5', 'f1@0.5', 'class_precision@0.5', 'class_recall@0.5', 'class_f1@0.5', 'matches@0.5', 'mAP@0.7', 'precision@0.7', 'recall@0.7', 'f1@0.7', 'class_precision@0.7', 'class_recall@0.7', 'class_f1@0.7', 'matches@0.7', 'mAP_coco', 'detection_metrics']
+  precision: 0.0
+  recall: 0.0
+  f1: 0.0
+  accuracy: 0.0
+  mAP: 0.0
+  class_precision: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  mAP@0.1: 0.000236318407960199
+  precision@0.1: 0.00024121470647978874
+  recall@0.1: 0.0009589179368123549
+  f1@0.1: 0.0003854659065549492
+  class_precision@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001890547263681592, 0.0]
+  class_recall@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.19791666666666666, 0.0]
+  class_f1@0.1: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0037453183520599247, 0.0]
+  matches@0.1: 19
+  mAP@0.3: 4.9751243781094526e-05
+  precision@0.3: 5.078204346942921e-05
+  recall@0.3: 0.0002018774603815484
+  f1@0.3: 8.115071716946297e-05
+  class_precision@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0003980099502487562, 0.0]
+  class_recall@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.041666666666666664, 0.0]
+  class_f1@0.3: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0007884880741178788, 0.0]
+  matches@0.3: 4
+  mAP@0.5: 0.0
+  precision@0.5: 0.0
+  recall@0.5: 0.0
+  f1@0.5: 0.0
+  class_precision@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.5: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.5: 0
+  mAP@0.7: 0.0
+  precision@0.7: 0.0
+  recall@0.7: 0.0
+  f1@0.7: 0.0
+  class_precision@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_recall@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  class_f1@0.7: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  matches@0.7: 0
+  mAP_coco: 0.0
+
+Important Validation Metrics:
+  Precision: 0.0000
+  Recall: 0.0000
+  F1 Score: 0.0000
+  Accuracy: 0.0000
+  mAP: 0.0000
+
+Adding end-of-epoch summary metrics to Wandb:
+  final_precision: 0.0
+  final_recall: 0.0
+  final_f1: 0.0
+  final_mAP: 0.0
+
+==================================================
+EPOCH 6/20
+==================================================
+Starting training for epoch 6...
+Initial GPU memory: 0.32 GB allocated, 0.41 GB reserved
+Training precision: BFloat16 (AMP: True)
+Epoch 6:   0%|              | 0/1436 [00:00<?, ?it/s]/usr/local/lib/python3.11/dist-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+Batch 1/1436, Loss: 9.6636
+Epoch 6:  39%|█▌  | 555/1436 [09:59<15:51,  1.08s/it]
+Batch 51/1436, Loss: 10.3728
+Batch 101/1436, Loss: 11.5099
+Batch 151/1436, Loss: 10.5328
+Batch 201/1436, Loss: 10.5102
+Batch 251/1436, Loss: 10.4955
+Batch 301/1436, Loss: 10.3476
+Batch 351/1436, Loss: 11.0987
+Batch 401/1436, Loss: 10.2157
+Batch 451/1436, Loss: 10.2818
+Batch 501/1436, Loss: 10.5356
+Batch 551/1436, Loss: 10.8963
+
+Training interrupted by user. Saving checkpoint...
+Checkpoint saved. Exiting gracefully.
+Training completed. Best validation loss: 10.8261

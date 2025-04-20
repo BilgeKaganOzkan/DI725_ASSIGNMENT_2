@@ -1,0 +1,15 @@
+{"time":"2025-04-20T16:23:35.621670229Z","level":"INFO","msg":"stream: starting","core version":"0.19.9","symlink path":"/content/drive/MyDrive/collapsee/wandb/run-20250420_162335-uj06le6s/logs/debug-core.log"}
+{"time":"2025-04-20T16:23:35.952681885Z","level":"INFO","msg":"created new stream","id":"uj06le6s"}
+{"time":"2025-04-20T16:23:35.953166947Z","level":"INFO","msg":"stream: started","id":"uj06le6s"}
+{"time":"2025-04-20T16:23:35.953213938Z","level":"INFO","msg":"writer: Do: started","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:23:35.953215615Z","level":"INFO","msg":"sender: started","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:23:35.953307687Z","level":"INFO","msg":"handler: started","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:23:36.228813528Z","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-04-20T16:29:11.881560304Z","level":"INFO","msg":"stream: closing","id":"uj06le6s"}
+{"time":"2025-04-20T16:29:11.881651008Z","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-04-20T16:29:11.881785654Z","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-04-20T16:29:13.411270528Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-04-20T16:29:13.647196363Z","level":"INFO","msg":"handler: closed","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:29:13.64723749Z","level":"INFO","msg":"writer: Close: closed","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:29:13.647251196Z","level":"INFO","msg":"sender: closed","stream_id":"uj06le6s"}
+{"time":"2025-04-20T16:29:13.648544115Z","level":"INFO","msg":"stream: closed","id":"uj06le6s"}

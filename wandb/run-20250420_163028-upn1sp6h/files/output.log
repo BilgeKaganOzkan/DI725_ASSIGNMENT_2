@@ -1,0 +1,17 @@
+Evaluating model...
+Evaluating: 100%|██| 308/308 [05:36<00:00,  1.09s/it]
+
+Evaluation results:
+mAP@0.5: 0.0000
+
+Class-wise AP@0.5 values:
+Human: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Car: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Truck: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Van: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Motorbike: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Bicycle: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Bus: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Trailer: AP=0.0000, Precision=0.0000, Recall=0.0000, F1=0.0000
+Visualizing predictions and saving to directory test_results...
+Saved 10 visualization images to test_results/visualizations
